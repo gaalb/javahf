@@ -1,0 +1,59 @@
+Model:
+    GameData: minden információ a játékról
+        Player
+            Profile: beállítások, hány labdája volt, honnan lőhetett
+            State: hány labda van még a tárban, hány labda jött vissza, mi a szög
+        CollideableObject-ek
+            Blockok: Polygon reprezentáció, középpont'
+            Segítségek: kör alak
+        Labdák: sebesség, irány, pozíció
+            Collision logika
+            Movement logika
+
+View:
+    GameFrame
+    GamePanel
+
+Controller:
+    Engine
+    InputHandler
+
+
+Collision detection:
+Egy ütközés mindig egy pontban fog történni, mert körrel fog az ütközés
+történni. Az ütközéskor az ütközési pont és a kör középpontja kijelölnek
+egy egyenest. Az ezzel az egyenessel párhuzamos sebességkomponens megfordul.
+Honnan lesz a pont?
+1.: a végpontok a körbe esnek-e?
+    1.a: ha igen, végpont ütközés, és a végpont a keresett pont
+    1.b: ha nem, akkor vagy nincs ütközés vagy oldal ütközés
+2.: megkeressük az egyenes körhöz legközelebb eső pontját
+3.: ha ez a pont nem esik az egyenesre, nincs collision
+4.: ha ez a pont az egyenesre esik, és távolsága a körtől kisebb,
+    mint a sugár, collision van és ő lesz a collision pont
+
+
+Tehát egyelőre meddig jussunk el, mi legyen a flow?
+-legyenek meg a model classok
+-fekete háttéren legyenek meg a helyet jelző dolgok
+-legyen egy labda amivel célzunk
+-lőjük ki a labdát
+-pattanjon le egy blokkról
+-pattanjon vissza a falakról
+-egészen amíg az aljára nem ér
+
+GOLYÓ MECHANIKA:
+-Az engine setupol egy timert
+-Amikor a timer tickel, a játékban lévő labdák updatelődnek
+    -a sebességüknek megfelelően frissül a pozíciójuk
+    -csekkolják az ütközéseket: először a fallal, aztán az objektumokkal
+    -ha kimennek a játékterületről, kimennek a játékból
+-A tárban lévő labdáknak az ágyú ad kezdő sebességet
+
+EGY KÖR:
+-aktív az ágyú
+-célzunk, lemegy a fire()
+-inaktív lesz az ágyú
+-labdák sebességet kapnak
+-amíg van labda ami aktív, inaktív marad az ágyú
+-az update a
