@@ -1,6 +1,8 @@
-package v2.View;
+package display;
 
-import v2.Model.*;
+import engine.GameEngine;
+import model.GameSettings;
+import model.*;
 
 import javax.swing.*;
 import java.awt.*;
@@ -10,13 +12,15 @@ import java.util.List;
 
 public class GamePanel extends JPanel {
     private Dimension dimension;
+    private GameEngine gameEngine;
     private GameData gameData;
 
 
-    public GamePanel(GameData gameData) {
-        this.gameData = gameData;
+    public GamePanel(GameEngine gameEngine) {
+        this.gameEngine = gameEngine;
+        this.gameData = gameEngine.getGameData();
         this.setDoubleBuffered(true);
-        dimension = new Dimension(GameData.GAME_WIDTH, GameData.GAME_HEIGHT);
+        dimension = new Dimension(GameSettings.GAME_WIDTH, GameSettings.GAME_HEIGHT);
         this.setPreferredSize(dimension);
     }
 
@@ -28,8 +32,8 @@ public class GamePanel extends JPanel {
     private void paintObjectSpots(Graphics2D g2d) {
         g2d.setColor(Color.LIGHT_GRAY);
         // Loop through each spot in the grid and draw a small dot at the center
-        for (int row = 0; row < GameData.BLOCK_ROWS; row++) {
-            for (int col = 0; col < GameData.BLOCK_COLUMNS; col++) {
+        for (int row = 0; row < GameSettings.BLOCK_ROWS; row++) {
+            for (int col = 0; col < GameSettings.BLOCK_COLUMNS; col++) {
                 ObjectSpot spot = gameData.getSpots()[row][col];
                 Point2D.Double center = spot.getCenter();
 
@@ -42,7 +46,7 @@ public class GamePanel extends JPanel {
     }
 
     private void paintCannon(Graphics2D g2d) {
-        Cannon cannon = gameData.getPlayer().getCannon();
+        Cannon cannon = gameData.getCannon();
         g2d.setColor(Color.RED);
         int circleRadius = 10;
         int triangleHeight = 40;

@@ -1,7 +1,4 @@
-package v2.Model;
-
-import v2.Controller.*;
-import v2.View.*;
+package model;
 
 import java.awt.geom.Point2D;
 

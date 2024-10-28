@@ -5,14 +5,33 @@
   </component>
   <component name="ChangeListManager">
     <list default="true" id="7b6c249b-17fb-4c7d-9524-8948dce8a5f8" name="Changes" comment="">
-      <change afterPath="$PROJECT_DIR$/.gitignore" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/.idea/encodings.xml" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/.idea/misc.xml" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/.idea/uiDesigner.xml" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/.idea/vcs.xml" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/pom.xml" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/src/main/java/v2/Main.java" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/src/main/java/engine/GameEngine.java" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/src/main/java/model/Cannon.java" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/src/main/java/model/GameData.java" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/src/main/java/model/GameSettings.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/v1/Ball.java" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/v1/BallDisplay.java" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/v1/GameData.java" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/v1/GameDisplay.java" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/v1/GameEngine.java" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/v1/GamePanel.java" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/v1/InputHandler.java" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/v1/Main.java" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/v1/Player.java" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/v2/Controller/InputHandler.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/engine/AimHandler.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/v2/GameEngine.java" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/v2/Main.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/Main.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/v2/Model/Ball.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/model/Ball.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/v2/Model/Block.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/model/Block.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/v2/Model/Boon.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/model/Boon.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/v2/Model/Cannon.java" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/v2/Model/CollideableObject.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/model/CollideableObject.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/v2/Model/GameData.java" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/v2/Model/ObjectSpot.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/model/ObjectSpot.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/v2/Model/Player.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/model/Player.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/v2/View/GameFrame.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/display/GameFrame.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/v2/View/GamePanel.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/display/GamePanel.java" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -39,17 +58,22 @@
     <option name="hideEmptyMiddlePackages" value="true" />
     <option name="showLibraryContents" value="true" />
   </component>
-  <component name="PropertiesComponent"><![CDATA[{
-  "keyToString": {
-    "Application.Main.executor": "Run",
-    "Application.v2.Main.executor": "Run",
-    "RunOnceActivity.ShowReadmeOnStart": "true",
-    "SHARE_PROJECT_CONFIGURATION_FILES": "true",
-    "git-widget-placeholder": "main",
-    "kotlin-language-version-configured": "true",
-    "last_opened_file_path": "D:/Mernokinfo/3_felev/prog3/lab/pong"
+  <component name="PropertiesComponent">{
+  &quot;keyToString&quot;: {
+    &quot;Application.Main.executor&quot;: &quot;Run&quot;,
+    &quot;Application.v2.Main.executor&quot;: &quot;Run&quot;,
+    &quot;RunOnceActivity.ShowReadmeOnStart&quot;: &quot;true&quot;,
+    &quot;SHARE_PROJECT_CONFIGURATION_FILES&quot;: &quot;true&quot;,
+    &quot;git-widget-placeholder&quot;: &quot;main&quot;,
+    &quot;kotlin-language-version-configured&quot;: &quot;true&quot;,
+    &quot;last_opened_file_path&quot;: &quot;D:/Mernokinfo/3_felev/prog3/lab/pong&quot;
   }
-}]]></component>
+}</component>
+  <component name="RecentsManager">
+    <key name="MoveClassesOrPackagesDialog.RECENTS_KEY">
+      <recent name="" />
+    </key>
+  </component>
   <component name="RunManager" selected="Application.v2.Main">
     <configuration name="Main" type="Application" factoryName="Application" temporary="true" nameIsGenerated="true">
       <option name="MAIN_CLASS_NAME" value="v1.Main" />
@@ -58,12 +82,12 @@
         <option name="Make" enabled="true" />
       </method>
     </configuration>
-    <configuration name="v2.Main" type="Application" factoryName="Application" temporary="true" nameIsGenerated="true">
-      <option name="MAIN_CLASS_NAME" value="v2.Main" />
+    <configuration name="Main" type="Application" factoryName="Application" temporary="true" nameIsGenerated="true">
+      <option name="MAIN_CLASS_NAME" value="Main" />
       <module name="hf" />
       <extension name="coverage">
         <pattern>
-          <option name="PATTERN" value="v2.*" />
+          <option name="PATTERN" value="engine.*" />
           <option name="ENABLED" value="true" />
         </pattern>
       </extension>
@@ -98,9 +122,14 @@
           <option name="timeStamp" value="2" />
         </line-breakpoint>
         <line-breakpoint enabled="true" type="java-line">
-          <url>file://$PROJECT_DIR$/src/main/java/v2/Controller/InputHandler.java</url>
+          <url>file://$PROJECT_DIR$/src/main/java/engine/AimHandler.java</url>
           <line>49</line>
           <option name="timeStamp" value="5" />
+        </line-breakpoint>
+        <line-breakpoint enabled="true" type="java-line">
+          <url>file://$PROJECT_DIR$/src/main/java/model/Ball.java</url>
+          <line>61</line>
+          <option name="timeStamp" value="6" />
         </line-breakpoint>
       </breakpoints>
     </breakpoint-manager>

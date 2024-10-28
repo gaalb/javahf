@@ -1,9 +1,5 @@
-package v2.Model;
+package model;
 
-import v2.View.*;
-import v2.Controller.*;
-
-import java.awt.*;
 import java.awt.geom.Point2D;
 
 public class ObjectSpot {

@@ -1,14 +1,16 @@
-package v2.Model;
+package model;
+
+import engine.GameEngine;
 
 public class Player {
+    private GameEngine gameEngine;
     private String name;
     private int score;
-    private Cannon cannon;
 
-    public Player(String name) {
+    public Player(String name, GameEngine gameEngine) {
+        this.gameEngine = gameEngine;
         this.name = name;
         score = 0;
-        cannon = new Cannon(GameData.GAME_WIDTH / 2, 90, 4);
     }
 
     public String getName() {
@@ -27,12 +29,5 @@ public class Player {
         this.score = score;
     }
 
-    public Cannon getCannon() {
-        return cannon;
-    }
-
-    public void setCannon(Cannon cannon) {
-        this.cannon = cannon;
-    }
 }
 

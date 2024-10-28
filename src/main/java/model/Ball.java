@@ -1,9 +1,10 @@
-package v2.Model;
+package model;
 
-import v2.View.*;
-import v2.Controller.*;
+import engine.GameEngine;
+import model.GameData.GameState;
 
 import java.awt.geom.Point2D;
+import java.util.*;
 
 public class Ball {
     public enum BallState {
@@ -14,8 +15,10 @@ public class Ball {
     private Point2D.Double velocity;
     private double radius;
     private BallState state;
+    private GameEngine gameEngine;
 
-    public Ball(Point2D.Double position, Point2D.Double velocity, double radius, BallState state) {
+    public Ball(Point2D.Double position, Point2D.Double velocity, double radius, BallState state, GameEngine gameEngine) {
+        this.gameEngine = gameEngine;
         this.position = position;
         this.velocity = velocity;
         this.radius = radius;
@@ -54,21 +57,25 @@ public class Ball {
         return state;
     }
 
-    public void handleWallCollision(GameData gameData) {
+    public void handleWallCollision() {
         if (position.x < radius) velocity.x *= -1; // left wall
-        if (position.x > GameData.GAME_WIDTH - radius) velocity.x *= -1;  // right wall
+        if (position.x > GameSettings.GAME_WIDTH - radius) velocity.x *= -1;  // right wall
         if (position.y < radius) velocity.y *= -1;  // top wall
-        if (position.y > GameData.GAME_HEIGHT + radius) {
-            Cannon cannon = gameData.getPlayer().getCannon();
-            cannon.getBallsReturned().add(this);
+        if (position.y > GameSettings.GAME_HEIGHT + radius) {
+            this.setState(BallState.RETURNED);
+            List<Ball> ballsInPlay = gameEngine.getGameData().getBallsInPlay();
+            if (ballsInPlay.isEmpty()) {
+                gameEngine.changeGameState(GameState.AIMING);
+            }
         }
+
     }
 
-    public void update(GameData gameData) {
-        double timestep = 1.0/GameData.FPS;
+    public void update() {
+        double timestep = 1.0/GameSettings.FPS;
         position.x += velocity.x * timestep;
         position.y += velocity.y * timestep;
-        handleWallCollision(gameData);
+        handleWallCollision();
     }
 
 }

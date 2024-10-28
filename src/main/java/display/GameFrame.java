@@ -1,17 +1,16 @@
-package v2.View;
+package display;
 
-import v2.Model.*;
-import v2.Controller.*;
+import engine.GameEngine;
 
 import javax.swing.*;
 
 public class GameFrame extends JFrame {
     private GamePanel gamePanel;
-    private GameData gameData;
+    private GameEngine gameEngine;
 
-    public GameFrame(GameData gameData) {
-        this.gameData = gameData;
-        gamePanel = new GamePanel(gameData);
+    public GameFrame(GameEngine gameEngine) {
+        this.gameEngine = gameEngine;
+        gamePanel = new GamePanel(gameEngine);
         this.add(gamePanel);
         this.setTitle("GBTAN");
         this.pack();
@@ -23,6 +22,10 @@ public class GameFrame extends JFrame {
 
     public GamePanel getGamePanel() {
         return gamePanel;
+    }
+
+    public GameEngine getGameEngine() {
+        return gameEngine;
     }
 
 }

@@ -1,4 +1,4 @@
-package v2.Model;
+package model;
 
 public class Boon {
 }

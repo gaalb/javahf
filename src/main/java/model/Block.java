@@ -1,7 +1,6 @@
-package v2.Model;
+package model;
 
-import v2.View.*;
-import v2.Controller.*;
+import engine.GameEngine;
 
 import java.awt.geom.Point2D;
 
@@ -46,7 +45,7 @@ public class Block extends CollideableObject {
         }
     }
 
-    public Block(BlockType type, ObjectSpot spot) {
+    public Block(BlockType type, ObjectSpot spot, GameEngine gameEngine) {
         super(spot);
         this.type = type;
         setCornersToSpot();
