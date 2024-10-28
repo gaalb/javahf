@@ -5,15 +5,8 @@
   </component>
   <component name="ChangeListManager">
     <list default="true" id="7b6c249b-17fb-4c7d-9524-8948dce8a5f8" name="Changes" comment="">
+      <change beforePath="$PROJECT_DIR$/.gitignore" beforeDir="false" afterPath="$PROJECT_DIR$/.gitignore" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/Main.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/Main.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/display/GamePanel.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/display/GamePanel.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/engine/CollisionDetection.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/engine/CollisionDetection.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/engine/GameEngine.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/engine/GameEngine.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/engine/GameStateSupervisor.java" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/model/Cannon.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/model/Cannon.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/model/GameData.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/model/GameData.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/model/GameSettings.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/model/GameSettings.java" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
