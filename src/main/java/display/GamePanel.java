@@ -47,16 +47,16 @@ public class GamePanel extends JPanel {
 
     private void paintCannon(Graphics2D g2d) {
         Cannon cannon = gameData.getCannon();
-        int circleRadius = 10;
-        int triangleHeight = 40;
-        int triangleWidth = 20;
+        int circleRadius = 15;
+        int triangleHeight = 60;
+        int triangleWidth = 35;
         double x = cannon.getPosition().getX();
         double y = cannon.getPosition().getY();
         double angleDeg = cannon.getAimAngle()-90;
         double angle = Math.toRadians(angleDeg);
 
         AffineTransform originalTransform = g2d.getTransform();
-        g2d.translate(x, y-0.5*circleRadius);
+        g2d.translate(x, y);
         g2d.rotate(-angle);
 
         int[] xPoints = {
@@ -65,7 +65,7 @@ public class GamePanel extends JPanel {
                 triangleWidth / 2
         };
         int[] yPoints = {
-                +circleRadius/2,
+                circleRadius,
                 -triangleHeight+circleRadius,
                 -triangleHeight+circleRadius
         };
@@ -116,9 +116,9 @@ public class GamePanel extends JPanel {
         g2d.setRenderingHint(RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_ON);
         paintBackground(g2d);
         paintObjectSpots(g2d);
-        paintCannon(g2d);
-        paintBalls(g2d);
         paintBlocks(g2d);
+        paintBalls(g2d);
+        paintCannon(g2d);
     }
 
 }

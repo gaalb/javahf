@@ -28,17 +28,16 @@ public class CollisionDetection {
         // is whichever is closest to the ball's center.
         // Collision between an edge and the ball is according to this:
         // https://www.jeffreythompson.org/collision-detection/line-circle.php
-        double effectiveRadius = ball.getRadius()+GameSettings.EPS;
         Point2D.Double c = ball.getPosition();
         Point2D.Double[][] sides = block.getSides();
         Set<Point2D.Double> collisionPoints = new HashSet<>();
         for (Point2D.Double[] side: sides) {
             Point2D.Double p1 = side[0];
             Point2D.Double p2 = side[1];
-            if (p1.distance(c) < effectiveRadius) {
+            if (p1.distance(c) < ball.getRadius()) {
                 collisionPoints.add(p1);
             }
-            if (p2.distance(c) < effectiveRadius) {
+            if (p2.distance(c) < ball.getRadius()) {
                 collisionPoints.add(p2);
             }
             double cx = c.x;
@@ -52,7 +51,7 @@ public class CollisionDetection {
             double closestX = x1 + dot*(x2-x1);
             double closestY = y1 + dot*(y2-y1);
             Point2D.Double closest = new Point2D.Double(closestX, closestY);
-            if (pointOnLine(closest, p1, p2) && ball.getPosition().distance(closest) <= effectiveRadius) {
+            if (pointOnLine(closest, p1, p2) && ball.getPosition().distance(closest) <= ball.getRadius()) {
                 collisionPoints.add(closest);
             }
         }

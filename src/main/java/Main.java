@@ -18,6 +18,7 @@ public class Main {
         blocks.add(new BlockConfig(0, 5, BlockType.SQUARE));
         blocks.add(new BlockConfig(6, 1, BlockType.TRIANGLE_LOWER_LEFT));
         blocks.add(new BlockConfig(3, 2, BlockType.SQUARE));
+        blocks.add(new BlockConfig(2, 7, BlockType.SQUARE));
         SwingUtilities.invokeLater(()-> {
             GameEngine engine = new GameEngine();
             engine.getGameData().initializeGame(4, blocks, 200);
