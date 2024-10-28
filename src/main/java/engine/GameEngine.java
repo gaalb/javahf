@@ -28,18 +28,23 @@ public class GameEngine {
         physicsTimer.addActionListener(this::updateGameState);
     }
 
+    private void ballLeavesPanel(Ball ball) {
+        if (gameData.getBallsReturned().isEmpty()) {
+            gameData.getCannon().setPosition(ball.getPosition().x);
+        }
+        ball.setState(Ball.BallState.RETURNED);
+        List<Ball> ballsInPlay = gameData.getBallsInPlay();
+        if (ballsInPlay.isEmpty()) {
+            changeGameState(GameState.AIMING);
+        }
+    }
+
     private void handleWallCollision(Ball ball) {
         Point2D.Double v = ball.getVelocity();
         if (ball.getPosition().x < ball.getRadius()) ball.setVelocity(Math.abs(v.x), v.y); // left wall
         if (ball.getPosition().x > GameSettings.GAME_WIDTH - ball.getRadius()) ball.setVelocity(-Math.abs(v.x), v.y);  // right wall
         if (ball.getPosition().y < ball.getRadius()) ball.setVelocity(v.x, Math.abs(v.y));  // top wall
-        if (ball.getPosition().y > GameSettings.GAME_HEIGHT + ball.getRadius()) {  // bottom wall
-            ball.setState(Ball.BallState.RETURNED);
-            List<Ball> ballsInPlay = gameData.getBallsInPlay();
-            if (ballsInPlay.isEmpty()) {
-                changeGameState(GameState.AIMING);
-            }
-        }
+        if (ball.getPosition().y > GameSettings.GAME_HEIGHT + ball.getRadius()) ballLeavesPanel(ball); // bottom wall
     }
 
     private void bounceBallOffPoint(Ball ball, Point2D.Double point) {
@@ -61,7 +66,7 @@ public class GameEngine {
     private SimpleEntry<Block, Point2D.Double> firstCollisionPoint(Ball ball) {
         // This method returns immediately upon finding a colliding block. Its return is the block
         // with which the ball collides, and the point where they collide (like a tuple in python).
-        double minCollisionDistance = ball.getRadius() + GameSettings.BLOCK_WIDTH/Math.sqrt(2) + CollisionDetection.eps;
+        double minCollisionDistance = ball.getRadius() + GameSettings.BLOCK_WIDTH/Math.sqrt(2) + GameSettings.EPS;
         for (Block block: gameData.getBlocks()) {
             if (ball.getPosition().distance(block.getPosition()) <= minCollisionDistance) {
                 Point2D.Double collisionPoint = CollisionDetection.ballBlockCollisionPoint(ball, block);

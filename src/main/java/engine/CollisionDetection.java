@@ -10,15 +10,13 @@ import java.util.Set;
 
 
 public class CollisionDetection {
-    public static double eps = 0.1;
-
     private static boolean pointOnLine(Point2D.Double p, Point2D.Double lineStart, Point2D.Double lineEnd) {
         // A point is on a line if the sum of distances from the end points is roughly
         // equal to the length of the line.
         double l = lineEnd.distance(lineStart);
         double d1 = p.distance(lineStart);
         double d2 = p.distance(lineEnd);
-        return Math.abs(l-d1-d2) < eps;
+        return Math.abs(l-d1-d2) < GameSettings.EPS;
     }
 
     public static Point2D.Double ballBlockCollisionPoint(Ball ball, Block block) {
@@ -30,7 +28,7 @@ public class CollisionDetection {
         // is whichever is closest to the ball's center.
         // Collision between an edge and the ball is according to this:
         // https://www.jeffreythompson.org/collision-detection/line-circle.php
-        double effectiveRadius = ball.getRadius()+CollisionDetection.eps;
+        double effectiveRadius = ball.getRadius()+GameSettings.EPS;
         Point2D.Double c = ball.getPosition();
         Point2D.Double[][] sides = block.getSides();
         Set<Point2D.Double> collisionPoints = new HashSet<>();

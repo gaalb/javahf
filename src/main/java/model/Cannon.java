@@ -38,8 +38,8 @@ public class Cannon {
         return new Point2D.Double(position.x, position.y);
     }
 
-    public void setPosition(Point2D.Double position) {
-        this.position = new Point2D.Double(position.x, position.y);
+    public void setPosition(double xPosition) {
+        this.position = new Point2D.Double(xPosition, position.y);
     }
 
     public void setPosition(double x, double y) {
@@ -56,7 +56,6 @@ public class Cannon {
         double vx = GameSettings.BALL_SPEED * Math.cos(Math.toRadians(aimAngle));
         double vy = -GameSettings.BALL_SPEED * Math.sin(Math.toRadians(aimAngle));
         b.setVelocity(new Point2D.Double(vx, vy));
-        System.out.println("FIRED BALL!");
     }
 
     private class FireHandler implements ActionListener {
@@ -82,9 +81,8 @@ public class Cannon {
     }
 
     public void fireAll() {
-        FireHandler fireHandler = new FireHandler(50);
+        FireHandler fireHandler = new FireHandler(GameSettings.FRAMES_BETWEEN_BALLS);
         gameEngine.getTimer().addActionListener(fireHandler);
-        System.out.println("FIRED CANNON");
     }
 
     public void storeBall(Ball b) {

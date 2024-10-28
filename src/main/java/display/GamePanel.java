@@ -47,7 +47,6 @@ public class GamePanel extends JPanel {
 
     private void paintCannon(Graphics2D g2d) {
         Cannon cannon = gameData.getCannon();
-        g2d.setColor(Color.RED);
         int circleRadius = 10;
         int triangleHeight = 40;
         int triangleWidth = 20;
@@ -55,7 +54,6 @@ public class GamePanel extends JPanel {
         double y = cannon.getPosition().getY();
         double angleDeg = cannon.getAimAngle()-90;
         double angle = Math.toRadians(angleDeg);
-        g2d.fillOval((int)x-circleRadius, (int)y-circleRadius, circleRadius*2, circleRadius*2);
 
         AffineTransform originalTransform = g2d.getTransform();
         g2d.translate(x, y-0.5*circleRadius);
@@ -71,27 +69,43 @@ public class GamePanel extends JPanel {
                 -triangleHeight+circleRadius,
                 -triangleHeight+circleRadius
         };
+        g2d.setColor(Color.RED);
         g2d.fillPolygon(xPoints, yPoints, 3);
+        g2d.setColor(Color.BLACK);
+        g2d.setStroke(new BasicStroke(2));
+        g2d.drawPolygon(xPoints, yPoints, 3);
         g2d.setTransform(originalTransform);
+
+        g2d.setColor(Color.RED);
+        g2d.fillOval((int)x-circleRadius, (int)y-circleRadius, circleRadius*2, circleRadius*2);
+        g2d.setColor(Color.BLACK);
+        g2d.setStroke(new BasicStroke(2));
+        g2d.drawOval((int)x-circleRadius, (int)y-circleRadius, circleRadius*2, circleRadius*2);
     }
 
     private void paintBalls(Graphics2D g2d) {
-        g2d.setColor(Color.WHITE);
         List<Ball> ballsInPlay = gameData.getBallsInPlay();
         for (Ball b: ballsInPlay) {
             int x = (int)(b.getPosition().x - b.getRadius());
             int y = (int)(b.getPosition().y - b.getRadius());
             int w = (int)(2*b.getRadius());
             int h = (int)(2*b.getRadius());
+            g2d.setColor(Color.WHITE);
             g2d.fillOval(x, y, w, h);
+            g2d.setColor(Color.BLACK);
+            g2d.setStroke(new BasicStroke(2));
+            g2d.drawOval(x, y, w, h);
         }
     }
 
     private void paintBlocks(Graphics2D g2d) {
         List<Block> blocks = gameData.getBlocks();
-        g2d.setColor(Color.BLUE);
         for (Block block: blocks) {
+            g2d.setColor(Color.BLUE);
             g2d.fillPolygon(block.getPolygon());
+            g2d.setColor(Color.BLACK);
+            g2d.setStroke(new BasicStroke(2));
+            g2d.drawPolygon(block.getPolygon());
         }
     }
 

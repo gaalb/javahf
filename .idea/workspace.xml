@@ -5,13 +5,15 @@
   </component>
   <component name="ChangeListManager">
     <list default="true" id="7b6c249b-17fb-4c7d-9524-8948dce8a5f8" name="Changes" comment="">
-      <change afterPath="$PROJECT_DIR$/src/main/java/engine/GameStateSupervisor.java" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/src/main/java/Main.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/Main.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/display/GamePanel.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/display/GamePanel.java" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/src/main/java/engine/CollisionDetection.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/engine/CollisionDetection.java" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/src/main/java/engine/GameEngine.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/engine/GameEngine.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/model/Block.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/model/Block.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/engine/GameStateSupervisor.java" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/model/Cannon.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/model/Cannon.java" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/src/main/java/model/GameData.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/model/GameData.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/model/GameSettings.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/model/GameSettings.java" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -116,22 +118,22 @@
         </line-breakpoint>
         <line-breakpoint enabled="true" type="java-line">
           <url>file://$PROJECT_DIR$/src/main/java/engine/CollisionDetection.java</url>
-          <line>20</line>
+          <line>18</line>
           <option name="timeStamp" value="20" />
         </line-breakpoint>
         <line-breakpoint enabled="true" type="java-line">
           <url>file://$PROJECT_DIR$/src/main/java/engine/CollisionDetection.java</url>
-          <line>17</line>
+          <line>15</line>
           <option name="timeStamp" value="23" />
         </line-breakpoint>
         <line-breakpoint enabled="true" type="java-line">
           <url>file://$PROJECT_DIR$/src/main/java/engine/CollisionDetection.java</url>
-          <line>37</line>
+          <line>35</line>
           <option name="timeStamp" value="24" />
         </line-breakpoint>
         <line-breakpoint enabled="true" type="java-line">
           <url>file://$PROJECT_DIR$/src/main/java/engine/GameEngine.java</url>
-          <line>31</line>
+          <line>42</line>
           <option name="timeStamp" value="25" />
         </line-breakpoint>
       </breakpoints>

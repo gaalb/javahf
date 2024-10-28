@@ -85,6 +85,16 @@ public class GameData {
         return ballsInPlay;
     }
 
+    public List<Ball> getBallsReturned() {
+        List<Ball> ballsReturned = new LinkedList<>();
+        for (Ball ball: balls) {
+            if (ball.getState() == BallState.RETURNED) {
+                ballsReturned.add(ball);
+            }
+        }
+        return ballsReturned;
+    }
+
     public GameEngine getGameEngine() {
         return gameEngine;
     }

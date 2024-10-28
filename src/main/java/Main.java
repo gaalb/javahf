@@ -14,10 +14,13 @@ public class Main {
         blocks.add(new BlockConfig(0, 0, BlockType.TRIANGLE_UPPER_LEFT));
         blocks.add(new BlockConfig(1, 0, BlockType.TRIANGLE_UPPER_RIGHT));
         blocks.add(new BlockConfig(4, 5, BlockType.SQUARE));
+        blocks.add(new BlockConfig(4, 4, BlockType.TRIANGLE_LOWER_RIGHT));
+        blocks.add(new BlockConfig(0, 5, BlockType.SQUARE));
+        blocks.add(new BlockConfig(6, 1, BlockType.TRIANGLE_LOWER_LEFT));
+        blocks.add(new BlockConfig(3, 2, BlockType.SQUARE));
         SwingUtilities.invokeLater(()-> {
             GameEngine engine = new GameEngine();
-            engine.getGameData().initializeGame(4, blocks, 150);
-            //engine.runGameLoop();
+            engine.getGameData().initializeGame(4, blocks, 200);
         });
     }
 }
