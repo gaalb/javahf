@@ -2,6 +2,7 @@ package model;
 
 import engine.GameEngine;
 import model.Ball.BallState;
+import model.Block.BlockType;
 
 import java.awt.geom.Point2D;
 import java.util.LinkedList;
@@ -27,16 +28,21 @@ public class GameData {
         spots = new ObjectSpot[GameSettings.BLOCK_ROWS][GameSettings.BLOCK_COLUMNS];
         initializeSpots();
         blocks = new LinkedList<>();
-        gameState = GameState.AIMING;
 
+        blocks.add(new Block(BlockType.TRIANGLE_UPPER_LEFT, spots[3][3], gameEngine)); // TODO
+        blocks.add(new Block(BlockType.TRIANGLE_UPPER_RIGHT, spots[3][4], gameEngine));
+        blocks.add(new Block(BlockType.TRIANGLE_LOWER_RIGHT, spots[4][4], gameEngine));
+
+        gameState = GameState.AIMING;
+        cannon = new Cannon(GameSettings.GAME_WIDTH / 2, 90, gameEngine);
         balls = new LinkedList<>();
         for (int i=0; i<GameSettings.STARTING_BALL_NUM; i++) {
             Point2D.Double p = new Point2D.Double(0.5*GameSettings.GAME_WIDTH, GameSettings.GAME_HEIGHT);
             Point2D.Double v = new Point2D.Double(0,0);
-            balls.add(new Ball(p, v, GameSettings.BALL_RADIUS, Ball.BallState.IN_STORE, gameEngine));
+            Ball b = new Ball(p, v, GameSettings.BALL_RADIUS, Ball.BallState.IN_STORE, gameEngine);
+            balls.add(b);
+            cannon.storeBall(b);
         }
-        List<Ball> storedBalls = new LinkedList<>(balls);
-        cannon = new Cannon(GameSettings.GAME_WIDTH / 2, 90, storedBalls,gameEngine);
     }
 
     private void initializeSpots() {
@@ -67,7 +73,6 @@ public class GameData {
         return balls;
     }
 
-
     public List<Ball> getBallsInPlay() {
         List<Ball> ballsInPlay = new LinkedList<>();
         for (Ball ball: balls) {
@@ -88,5 +93,9 @@ public class GameData {
 
     public void setGameState(GameState gameState) {
         this.gameState = gameState;
+    }
+
+    public List<Block> getBlocks() {
+        return blocks;
     }
 }

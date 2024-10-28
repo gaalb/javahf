@@ -2,6 +2,7 @@ package model;
 
 import engine.GameEngine;
 
+import java.awt.*;
 import java.awt.geom.Point2D;
 
 public class Block extends CollideableObject {
@@ -14,7 +15,6 @@ public class Block extends CollideableObject {
     }
     private Point2D.Double[] corners;
     private BlockType type;
-    private ObjectSpot spot;
 
     private void setCornersToSpot() {
         Point2D.Double[] spotCorners = spot.getCorners();
@@ -75,4 +75,29 @@ public class Block extends CollideableObject {
         return new Point2D.Double(0, 0);  // TODO
     }
 
+    public Point2D.Double getPosition() {
+        return spot.getCenter();
+    }
+
+    public Point2D.Double[][] getSides() {
+        int numCorners = corners.length;
+        Point2D.Double[][] sides = new Point2D.Double[numCorners][2];
+
+        for (int i = 0; i < numCorners; i++) {
+            sides[i][0] = corners[i];
+            sides[i][1] = corners[(i + 1) % numCorners];
+        }
+        return sides;
+    }
+
+    public Polygon getPolygon() {
+        Point2D.Double[] points = getCorners();
+        int[] xPoints = new int[points.length];
+        int[] yPoints = new int[points.length];
+        for (int i=0; i<points.length; i++) {
+            xPoints[i] = (int)Math.round(points[i].x);
+            yPoints[i] = (int)Math.round(points[i].y);
+        }
+        return new Polygon(xPoints, yPoints, points.length);
+    }
 }

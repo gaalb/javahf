@@ -26,11 +26,11 @@ public class Ball {
     }
 
     public Point2D.Double getPosition() {
-        return position;
+        return new Point2D.Double(position.x, position.y); // clone to avoid accidents
     }
 
     public Point2D.Double getVelocity() {
-        return velocity;
+        return new Point2D.Double(velocity.x, velocity.y);
     }
 
     public double getRadius() {
@@ -38,11 +38,19 @@ public class Ball {
     }
 
     public void setPosition(Point2D.Double position) {
-        this.position = position;
+        this.position = new Point2D.Double(position.x, position.y);
+    }
+
+    public void setPosition(double x, double y) {
+        this.position = new Point2D.Double(x, y);
     }
 
     public void setVelocity(Point2D.Double velocity) {
-        this.velocity = velocity;
+        this.velocity = new Point2D.Double(velocity.x, velocity.y);
+    }
+
+    public void setVelocity(double x, double y) {
+        this.velocity = new Point2D.Double(x, y);
     }
 
     public void setRadius(double radius) {
@@ -56,26 +64,4 @@ public class Ball {
     public BallState getState() {
         return state;
     }
-
-    public void handleWallCollision() {
-        if (position.x < radius) velocity.x *= -1; // left wall
-        if (position.x > GameSettings.GAME_WIDTH - radius) velocity.x *= -1;  // right wall
-        if (position.y < radius) velocity.y *= -1;  // top wall
-        if (position.y > GameSettings.GAME_HEIGHT + radius) {
-            this.setState(BallState.RETURNED);
-            List<Ball> ballsInPlay = gameEngine.getGameData().getBallsInPlay();
-            if (ballsInPlay.isEmpty()) {
-                gameEngine.changeGameState(GameState.AIMING);
-            }
-        }
-
-    }
-
-    public void update() {
-        double timestep = 1.0/GameSettings.FPS;
-        position.x += velocity.x * timestep;
-        position.y += velocity.y * timestep;
-        handleWallCollision();
-    }
-
 }

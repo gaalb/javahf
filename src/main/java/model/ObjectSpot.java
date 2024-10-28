@@ -31,7 +31,7 @@ public class ObjectSpot {
     }
 
     public Point2D.Double getCenter() {
-        return center;
+        return new Point2D.Double(center.x, center.y);
     }
 
     public double getSideLength() {

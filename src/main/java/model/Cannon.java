@@ -14,16 +14,16 @@ import javax.swing.*;
 
 public class Cannon {
     private double aimAngle;
-    private Point position;
+    private Point2D.Double position;
     private GameEngine gameEngine;
 
     private List<Ball> storedBalls;
 
-    public Cannon(int xPosition, double aimAngle, List<Ball> storedBalls, GameEngine gameEngine) {
+    public Cannon(int xPosition, double aimAngle, GameEngine gameEngine) {
         this.gameEngine = gameEngine;
-        position = new Point(xPosition, GameSettings.GAME_HEIGHT);
+        position = new Point2D.Double(xPosition, GameSettings.GAME_HEIGHT);
         this.aimAngle = aimAngle;
-        this.storedBalls = storedBalls;
+        this.storedBalls = new LinkedList<>();
     }
 
     public double getAimAngle() {
@@ -34,54 +34,62 @@ public class Cannon {
         this.aimAngle = aimAngle;
     }
 
-    public Point getPosition() {
-        return position;
+    public Point2D.Double getPosition() {
+        return new Point2D.Double(position.x, position.y);
     }
 
-    public void setPosition(Point newPosition) {
-        position = newPosition;
+    public void setPosition(Point2D.Double position) {
+        this.position = new Point2D.Double(position.x, position.y);
     }
 
-    public List<Ball> getStoredBalls() {
-        return storedBalls;
+    public void setPosition(double x, double y) {
+        this.position = new Point2D.Double(x, y);
+    }
+
+    public int storedNumber() {
+        return storedBalls.size();
+    }
+
+    private void fireSingleBall() {
+        Ball b = storedBalls.removeFirst();
+        b.setState(Ball.BallState.IN_PLAY);
+        double vx = GameSettings.BALL_SPEED * Math.cos(Math.toRadians(aimAngle));
+        double vy = -GameSettings.BALL_SPEED * Math.sin(Math.toRadians(aimAngle));
+        b.setVelocity(new Point2D.Double(vx, vy));
+        System.out.println("FIRED BALL!");
     }
 
     private class FireHandler implements ActionListener {
         private int frameCounter;
         private int framesPerShot;
-        List<Ball> ballsInPlay;
-        Timer timer;
-        public FireHandler(List<Ball> ballsInPlay, int framesPerShot, Timer timer) {
+        public FireHandler(int framesPerShot) {
             frameCounter = framesPerShot;
             this.framesPerShot = framesPerShot;
-            this.ballsInPlay = ballsInPlay;
-            this.timer = timer;
         }
 
         @Override
         public void actionPerformed(ActionEvent e) {
             if (!storedBalls.isEmpty()) {
                 if (frameCounter >= framesPerShot) {
-                    Ball b = storedBalls.removeFirst();
-                    b.setState(Ball.BallState.IN_PLAY);
-                    double vx = GameSettings.BALL_SPEED * Math.cos(Math.toRadians(aimAngle));
-                    double vy = -GameSettings.BALL_SPEED * Math.sin(Math.toRadians(aimAngle));
-                    b.setVelocity(new Point2D.Double(vx, vy));
-                    ballsInPlay.add(b);
+                    fireSingleBall();
                     frameCounter = 0;
                 }
                 frameCounter++;
             } else {
-                timer.removeActionListener(this);
+                gameEngine.getTimer().removeActionListener(this);
             }
         }
     }
 
     public void fireAll() {
-        List<Ball> ballsInPlay = gameEngine.getGameData().getBallsInPlay();
-        Timer timer = gameEngine.getTimer();
-        FireHandler fireHandler = new FireHandler(ballsInPlay, 50, timer);
-        timer.addActionListener(fireHandler);
+        FireHandler fireHandler = new FireHandler(50);
+        gameEngine.getTimer().addActionListener(fireHandler);
         System.out.println("FIRED CANNON");
+    }
+
+    public void storeBall(Ball b) {
+        storedBalls.add(b);
+        b.setState(BallState.IN_STORE);
+        b.setPosition(position);
     }
 }

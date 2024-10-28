@@ -87,6 +87,14 @@ public class GamePanel extends JPanel {
         }
     }
 
+    private void paintBlocks(Graphics2D g2d) {
+        List<Block> blocks = gameData.getBlocks();
+        g2d.setColor(Color.BLUE);
+        for (Block block: blocks) {
+            g2d.fillPolygon(block.getPolygon());
+        }
+    }
+
     @Override
     protected void paintComponent(Graphics g) {
         super.paintComponent(g);
@@ -96,6 +104,7 @@ public class GamePanel extends JPanel {
         paintObjectSpots(g2d);
         paintCannon(g2d);
         paintBalls(g2d);
+        paintBlocks(g2d);
     }
 
 }
