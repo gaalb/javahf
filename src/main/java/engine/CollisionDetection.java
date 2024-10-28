@@ -4,10 +4,25 @@ import model.*;
 
 import java.awt.*;
 import java.awt.geom.Point2D;
+import java.util.Collections;
+import java.util.LinkedList;
+import java.util.List;
 
 
 public class CollisionDetection {
+    // https://www.jeffreythompson.org/collision-detection/line-circle.php
     public static double eps = 0.1;
+
+    private static Point2D.Double averagePoint(List<Point2D.Double> points) {
+        Point2D.Double avg = new Point2D.Double(0, 0);
+        for (Point2D.Double point: points) {
+            avg.x += point.x;
+            avg.y += point.y;
+        }
+        avg.x /= points.size();
+        avg.y /= points.size();
+        return avg;
+    }
 
     private static boolean pointOnLine(Point2D.Double p, Point2D.Double lineStart, Point2D.Double lineEnd) {
         double l = lineEnd.distance(lineStart);
@@ -20,33 +35,43 @@ public class CollisionDetection {
     }
 
     public static Point2D.Double ballBlock(Ball ball, Block block) {
-        double effectiveRadius = ball.getRadius() + CollisionDetection.eps;
-        for (Point2D.Double corner: block.getCorners()) {
-            if (corner.distance(ball.getPosition()) <= effectiveRadius) {
-                return corner;
-            }
-        }
+        double effectiveRadius = ball.getRadius();
+        Point2D.Double c = ball.getPosition();
+
         Point2D.Double[][] sides = block.getSides();
-        // https://www.jeffreythompson.org/collision-detection/line-circle.php
+        List<Point2D.Double> collisionPoints = new LinkedList<>();
         for (Point2D.Double[] side: sides) {
             Point2D.Double p1 = side[0];
             Point2D.Double p2 = side[1];
-            double cx = ball.getPosition().x;
-            double cy = ball.getPosition().y;
-            double x1 = p1.x;
-            double x2 = p2.x;
-            double y1 = p1.y;
-            double y2 = p2.y;
-            double l = p1.distance(p2);
-            double dot = (((cx-x1)*(x2-x1))+((cy-y1)*(y2-y1)))/(l*l);
-            double closestX = x1 + dot*(x2-x1);
-            double closestY = y1 + dot*(y2-y1);
-            Point2D.Double closest = new Point2D.Double(closestX, closestY);
-            if (pointOnLine(closest, p1, p2) && ball.getPosition().distance(closest) <= effectiveRadius) {
-                return closest;
+            if (p1.distance(c) < effectiveRadius) {
+                collisionPoints.add(p1);
+            } else if (p2.distance(c) < effectiveRadius) {
+                collisionPoints.add(p2);
+            } else {
+                double cx = c.x;
+                double cy = c.y;
+                double x1 = p1.x;
+                double x2 = p2.x;
+                double y1 = p1.y;
+                double y2 = p2.y;
+                double l = p1.distance(p2);
+                double dot = (((cx-x1)*(x2-x1))+((cy-y1)*(y2-y1)))/(l*l);
+                double closestX = x1 + dot*(x2-x1);
+                double closestY = y1 + dot*(y2-y1);
+                Point2D.Double closest = new Point2D.Double(closestX, closestY);
+                if (pointOnLine(closest, p1, p2) && ball.getPosition().distance(closest) <= effectiveRadius) {
+                    collisionPoints.add(closest);
+                }
             }
         }
-        return null;
+        if (!collisionPoints.isEmpty()) {
+            return Collections.max(collisionPoints, (p1, p2) -> {
+                Point2D.Double p0 = ball.getPosition();
+                return Double.compare(p0.distance(p1), p0.distance(p2));
+            });
+        } else {
+            return null;
+        }
     }
 
     public static Point2D.Double reflectVelocity(Point2D.Double velocity, Point2D.Double direction) {

@@ -29,9 +29,9 @@ public class GameData {
         initializeSpots();
         blocks = new LinkedList<>();
 
-        blocks.add(new Block(BlockType.TRIANGLE_UPPER_LEFT, spots[3][3], gameEngine)); // TODO
-        blocks.add(new Block(BlockType.TRIANGLE_UPPER_RIGHT, spots[3][4], gameEngine));
-        blocks.add(new Block(BlockType.TRIANGLE_LOWER_RIGHT, spots[4][4], gameEngine));
+        blocks.add(new Block(BlockType.TRIANGLE_UPPER_LEFT, spots[5][3], gameEngine)); // TODO
+        blocks.add(new Block(BlockType.TRIANGLE_UPPER_RIGHT, spots[5][4], gameEngine));
+        blocks.add(new Block(BlockType.TRIANGLE_LOWER_RIGHT, spots[6][4], gameEngine));
 
         gameState = GameState.AIMING;
         cannon = new Cannon(GameSettings.GAME_WIDTH / 2, 90, gameEngine);
