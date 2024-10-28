@@ -45,7 +45,7 @@ public class GameData {
     }
 
     public void initializeGame(int numberOfBalls, List<BlockConfig> blocks, int cannonPlacement) {
-        gameEngine.changeGameState(GameState.AIMING);
+        gameEngine.getGameStateSupervisor().setGameState(GameState.AIMING);
         for (BlockConfig config: blocks) {
             this.blocks.add(new Block(config.type, spots[config.y][config.x], gameEngine));
         }

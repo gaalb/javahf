@@ -38,7 +38,6 @@ public class AimHandler extends MouseAdapter {
         if (isAiming) {
             isAiming = false;
             gameEngine.getGameData().getCannon().fireAll();
-            gameEngine.changeGameState(GameState.PLAYING);
         }
     }
 

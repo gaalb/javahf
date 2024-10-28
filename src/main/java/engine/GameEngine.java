@@ -15,17 +15,16 @@ import java.util.AbstractMap.SimpleEntry;
 public class GameEngine {
     private GameData gameData;
     private GameFrame gameFrame;
+    private GameStateSupervisor gameStateSupervisor;
     private javax.swing.Timer physicsTimer;
 
-    private AimHandler aimHandler;
-
     public GameEngine() {
-        gameData = new GameData(this);
-        gameFrame = new GameFrame(this);
-        aimHandler = new AimHandler(this);
         physicsTimer = new Timer(GameSettings.PHYSICS_STEP_MS, null);
         physicsTimer.start();
         physicsTimer.addActionListener(this::updateGameState);
+        gameData = new GameData(this);
+        gameFrame = new GameFrame(this);
+        gameStateSupervisor = new GameStateSupervisor(this);
     }
 
     private void ballLeavesPanel(Ball ball) {
@@ -33,10 +32,6 @@ public class GameEngine {
             gameData.getCannon().setPosition(ball.getPosition().x);
         }
         ball.setState(Ball.BallState.RETURNED);
-        List<Ball> ballsInPlay = gameData.getBallsInPlay();
-        if (ballsInPlay.isEmpty()) {
-            changeGameState(GameState.AIMING);
-        }
     }
 
     private void handleWallCollision(Ball ball) {
@@ -116,22 +111,7 @@ public class GameEngine {
         return gameFrame;
     }
 
-    public void changeGameState(GameState newState) {
-        gameData.setGameState(newState);
-        if (newState == GameState.AIMING) {
-            gameFrame.getGamePanel().addMouseListener(aimHandler);
-            gameFrame.getGamePanel().addMouseMotionListener(aimHandler);
-            Cannon cannon = gameData.getCannon();
-            List<Ball> balls = gameData.getBalls();
-            for (Ball b: balls) {
-                if (b.getState() == Ball.BallState.RETURNED) {
-                    cannon.storeBall(b);
-                }
-            }
-        }
-        if (newState == GameState.PLAYING) {
-            gameFrame.getGamePanel().removeMouseListener(aimHandler);
-            gameFrame.getGamePanel().addMouseMotionListener(aimHandler);
-        }
+    public GameStateSupervisor getGameStateSupervisor() {
+        return gameStateSupervisor;
     }
 }
