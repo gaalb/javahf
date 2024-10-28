@@ -7,7 +7,10 @@ import display.*;
 import javax.swing.*;
 import java.awt.event.ActionEvent;
 import java.awt.geom.Point2D;
+import java.util.AbstractMap;
 import java.util.List;
+import java.util.Map;
+import java.util.AbstractMap.SimpleEntry;
 
 public class GameEngine {
     private GameData gameData;
@@ -27,9 +30,9 @@ public class GameEngine {
 
     private void handleWallCollision(Ball ball) {
         Point2D.Double v = ball.getVelocity();
-        if (ball.getPosition().x < ball.getRadius()) ball.setVelocity(-v.x, v.y); // left wall
-        if (ball.getPosition().x > GameSettings.GAME_WIDTH - ball.getRadius()) ball.setVelocity(-v.x, v.y);  // right wall
-        if (ball.getPosition().y < ball.getRadius()) ball.setVelocity(v.x, -v.y);  // top wall
+        if (ball.getPosition().x < ball.getRadius()) ball.setVelocity(Math.abs(v.x), v.y); // left wall
+        if (ball.getPosition().x > GameSettings.GAME_WIDTH - ball.getRadius()) ball.setVelocity(-Math.abs(v.x), v.y);  // right wall
+        if (ball.getPosition().y < ball.getRadius()) ball.setVelocity(v.x, Math.abs(v.y));  // top wall
         if (ball.getPosition().y > GameSettings.GAME_HEIGHT + ball.getRadius()) {  // bottom wall
             ball.setState(Ball.BallState.RETURNED);
             List<Ball> ballsInPlay = gameData.getBallsInPlay();
@@ -48,32 +51,35 @@ public class GameEngine {
         double dot = v.x * unitDirection.x + v.y * unitDirection.y;
         Point2D.Double projection = new Point2D.Double(dot * unitDirection.x, dot*unitDirection.y);
         Point2D.Double perpendicular = new Point2D.Double(v.x - projection.x, v.y-projection.y);
-
         Point2D.Double vNew = new Point2D.Double(perpendicular.x - projection.x, perpendicular.y - projection.y);
-
         ball.setVelocity(vNew);
     }
 
-    private void handleBlockCollision(Ball ball, Block block) {
-        double minCollisionDistance = ball.getRadius() + GameSettings.BLOCK_WIDTH/Math.sqrt(2);
-        if (ball.getPosition().distance(block.getPosition()) > minCollisionDistance) {
-            return;
+    private SimpleEntry<Block, Point2D.Double> firstCollisionPoint(Ball ball) {
+        double minCollisionDistance = ball.getRadius() + GameSettings.BLOCK_WIDTH/Math.sqrt(2) + CollisionDetection.eps;
+        for (Block block: gameData.getBlocks()) {
+            if (ball.getPosition().distance(block.getPosition()) <= minCollisionDistance) {
+                Point2D.Double collisionPoint = CollisionDetection.ballBlockCollisionPoint(ball, block);
+                if (collisionPoint != null) {
+                    return new SimpleEntry<>(block, collisionPoint);
+                }
+            }
         }
-        // Possible collision
-        Point2D.Double collisionPoint = CollisionDetection.ballBlock(ball, block);
-        if (collisionPoint != null) {
-            System.out.println("COLLISION");
-            bounceBallOffPoint(ball, collisionPoint);
-        }
+        return null;
     }
 
     private void updateBall(Ball ball) {
-        Point2D.Double position = ball.getPosition();
-        Point2D.Double velocity = ball.getVelocity();
-        ball.setPosition(new Point2D.Double(position.x + velocity.x, position.y + velocity.y));
-        handleWallCollision(ball);
-        for (Block block: gameData.getBlocks()) {
-            handleBlockCollision(ball, block);
+        ball.move();
+        handleWallCollision(ball);  // change direction from walls
+        SimpleEntry<Block, Point2D.Double> blockAndPoint = firstCollisionPoint(ball);
+        while (blockAndPoint !=  null) {
+            Block block = blockAndPoint.getKey();
+            Point2D.Double collisionPoint = blockAndPoint.getValue();
+            bounceBallOffPoint(ball, collisionPoint);
+            while (CollisionDetection.ballBlockCollisionPoint(ball, block) != null) {
+                ball.move();
+            }
+            blockAndPoint = firstCollisionPoint(ball);
         }
     }
 

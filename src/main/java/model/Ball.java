@@ -64,4 +64,9 @@ public class Ball {
     public BallState getState() {
         return state;
     }
+
+    public void move() {
+        position.x += velocity.x;;
+        position.y += velocity.y;
+    }
 }
