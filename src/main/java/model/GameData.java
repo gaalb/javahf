@@ -3,6 +3,7 @@ package model;
 import engine.GameEngine;
 import model.Ball.BallState;
 import model.Block.BlockType;
+import model.Block.BlockConfig;
 
 import java.awt.geom.Point2D;
 import java.util.LinkedList;
@@ -28,21 +29,7 @@ public class GameData {
         spots = new ObjectSpot[GameSettings.BLOCK_ROWS][GameSettings.BLOCK_COLUMNS];
         initializeSpots();
         blocks = new LinkedList<>();
-
-        blocks.add(new Block(BlockType.TRIANGLE_UPPER_LEFT, spots[5][3], gameEngine)); // TODO
-        blocks.add(new Block(BlockType.TRIANGLE_UPPER_RIGHT, spots[5][4], gameEngine));
-        blocks.add(new Block(BlockType.TRIANGLE_LOWER_RIGHT, spots[6][4], gameEngine));
-
-        gameState = GameState.AIMING;
-        cannon = new Cannon(GameSettings.GAME_WIDTH / 2, 90, gameEngine);
         balls = new LinkedList<>();
-        for (int i=0; i<GameSettings.STARTING_BALL_NUM; i++) {
-            Point2D.Double p = new Point2D.Double(0.5*GameSettings.GAME_WIDTH, GameSettings.GAME_HEIGHT);
-            Point2D.Double v = new Point2D.Double(0,0);
-            Ball b = new Ball(p, v, GameSettings.BALL_RADIUS, Ball.BallState.IN_STORE, gameEngine);
-            balls.add(b);
-            cannon.storeBall(b);
-        }
     }
 
     private void initializeSpots() {
@@ -54,6 +41,21 @@ public class GameData {
 
                 spots[row][col] = new ObjectSpot(center, GameSettings.BLOCK_WIDTH);
             }
+        }
+    }
+
+    public void initializeGame(int numberOfBalls, List<BlockConfig> blocks, int cannonPlacement) {
+        gameEngine.changeGameState(GameState.AIMING);
+        for (BlockConfig config: blocks) {
+            this.blocks.add(new Block(config.type, spots[config.y][config.x], gameEngine));
+        }
+        cannon = new Cannon(cannonPlacement, 90, gameEngine);
+        for (int i=0; i<numberOfBalls; i++) {
+            Point2D.Double p = new Point2D.Double(0.5*GameSettings.GAME_WIDTH, GameSettings.GAME_HEIGHT);
+            Point2D.Double v = new Point2D.Double(0,0);
+            Ball b = new Ball(p, v, GameSettings.BALL_RADIUS, Ball.BallState.IN_STORE, gameEngine);
+            balls.add(b);
+            cannon.storeBall(b);
         }
     }
 

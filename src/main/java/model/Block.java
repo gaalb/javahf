@@ -100,4 +100,16 @@ public class Block extends CollideableObject {
         }
         return new Polygon(xPoints, yPoints, points.length);
     }
+
+    public static class BlockConfig {
+        BlockType type;
+        int x;
+        int y;
+        public BlockConfig(int x, int y, BlockType type) {
+            this.x = x;
+            this.y = y;
+            this.type = type;
+        }
+    }
+
 }

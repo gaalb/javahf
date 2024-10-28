@@ -43,10 +43,13 @@ public class GameEngine {
     }
 
     private void bounceBallOffPoint(Ball ball, Point2D.Double point) {
+        // Calculates the portion of the ball's velocity which is parallel
+        // to the line drawn between the ball's center and the collision
+        // point, and inverts that component.
         Point2D.Double ballCenter = ball.getPosition();
         Point2D.Double direction = new Point2D.Double(point.x-ballCenter.x, point.y-ballCenter.y);
-        double magnitudeDirection = Math.sqrt(direction.x * direction.x + direction.y * direction.y);
-        Point2D.Double unitDirection = new Point2D.Double(direction.x / magnitudeDirection, direction.y / magnitudeDirection);
+        double magnitudeDir = Math.sqrt(direction.x * direction.x + direction.y * direction.y);
+        Point2D.Double unitDirection = new Point2D.Double(direction.x / magnitudeDir, direction.y / magnitudeDir);
         Point2D.Double v = ball.getVelocity();
         double dot = v.x * unitDirection.x + v.y * unitDirection.y;
         Point2D.Double projection = new Point2D.Double(dot * unitDirection.x, dot*unitDirection.y);
@@ -56,6 +59,8 @@ public class GameEngine {
     }
 
     private SimpleEntry<Block, Point2D.Double> firstCollisionPoint(Ball ball) {
+        // This method returns immediately upon finding a colliding block. Its return is the block
+        // with which the ball collides, and the point where they collide (like a tuple in python).
         double minCollisionDistance = ball.getRadius() + GameSettings.BLOCK_WIDTH/Math.sqrt(2) + CollisionDetection.eps;
         for (Block block: gameData.getBlocks()) {
             if (ball.getPosition().distance(block.getPosition()) <= minCollisionDistance) {
@@ -69,16 +74,20 @@ public class GameEngine {
     }
 
     private void updateBall(Ball ball) {
+        // Each round we leave the ball in a state where it doesn't collide with anything. This way,
+        // at the start of a new round, we don't need to check for collisions, only after moving.
         ball.move();
         handleWallCollision(ball);  // change direction from walls
         SimpleEntry<Block, Point2D.Double> blockAndPoint = firstCollisionPoint(ball);
-        while (blockAndPoint !=  null) {
+        while (blockAndPoint !=  null) { // while any collisions are left
             Block block = blockAndPoint.getKey();
             Point2D.Double collisionPoint = blockAndPoint.getValue();
-            bounceBallOffPoint(ball, collisionPoint);
+            bounceBallOffPoint(ball, collisionPoint); // reflect off a block
+            // then move away from the block until the collision is resolved
             while (CollisionDetection.ballBlockCollisionPoint(ball, block) != null) {
                 ball.move();
             }
+            // then move on to the next colliding block
             blockAndPoint = firstCollisionPoint(ball);
         }
     }

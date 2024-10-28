@@ -4,29 +4,36 @@ import model.*;
 
 import java.awt.geom.Point2D;
 import java.util.Collections;
+import java.util.HashSet;
 import java.util.LinkedList;
-import java.util.List;
+import java.util.Set;
 
 
 public class CollisionDetection {
-    // https://www.jeffreythompson.org/collision-detection/line-circle.php
     public static double eps = 0.1;
 
     private static boolean pointOnLine(Point2D.Double p, Point2D.Double lineStart, Point2D.Double lineEnd) {
+        // A point is on a line if the sum of distances from the end points is roughly
+        // equal to the length of the line.
         double l = lineEnd.distance(lineStart);
         double d1 = p.distance(lineStart);
         double d2 = p.distance(lineEnd);
-        System.out.printf("%.3f\n",Math.abs(l-d1-d2));
-        boolean ret = Math.abs(l-d1-d2) < eps;
-        if (ret) System.out.println("Point on line!");
-        return ret;
+        return Math.abs(l-d1-d2) < eps;
     }
 
     public static Point2D.Double ballBlockCollisionPoint(Ball ball, Block block) {
+        // This method checks for collision points, which can be:
+        // - A corner
+        // - A point along an edge
+        // We may find several collision points (for example if the ball's circle
+        // intersects with two edges and a corner). The resulting collision point
+        // is whichever is closest to the ball's center.
+        // Collision between an edge and the ball is according to this:
+        // https://www.jeffreythompson.org/collision-detection/line-circle.php
         double effectiveRadius = ball.getRadius()+CollisionDetection.eps;
         Point2D.Double c = ball.getPosition();
         Point2D.Double[][] sides = block.getSides();
-        List<Point2D.Double> collisionPoints = new LinkedList<>();
+        Set<Point2D.Double> collisionPoints = new HashSet<>();
         for (Point2D.Double[] side: sides) {
             Point2D.Double p1 = side[0];
             Point2D.Double p2 = side[1];
@@ -59,24 +66,5 @@ public class CollisionDetection {
         } else {
             return null;
         }
-    }
-
-    public static Point2D.Double reflectVelocity(Point2D.Double velocity, Point2D.Double direction) {
-        // Normalize the direction vector
-        double dirMagnitude = Math.sqrt(direction.x * direction.x + direction.y * direction.y);
-        Point2D.Double unitDirection = new Point2D.Double(direction.x / dirMagnitude, direction.y / dirMagnitude);
-
-        // Project the velocity onto the direction vector
-        double dotProduct = velocity.x * unitDirection.x + velocity.y * unitDirection.y;
-        Point2D.Double projection = new Point2D.Double(dotProduct * unitDirection.x, dotProduct * unitDirection.y);
-
-        // Reverse the projection to get the reflection
-        Point2D.Double reflectedProjection = new Point2D.Double(-projection.x, -projection.y);
-
-        // Calculate the perpendicular component by subtracting the original projection from the velocity
-        Point2D.Double perpendicularComponent = new Point2D.Double(velocity.x - projection.x, velocity.y - projection.y);
-
-        // Add the perpendicular component and the reversed projection to get the modified velocity
-        return new Point2D.Double(perpendicularComponent.x + reflectedProjection.x, perpendicularComponent.y + reflectedProjection.y);
     }
 }
