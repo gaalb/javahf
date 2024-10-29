@@ -1,22 +1,18 @@
 package model;
 
 import engine.GameEngine;
-import model.GameData.GameState;
 import model.Ball.BallState;
 
-import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.geom.Point2D;
 import java.util.LinkedList;
 import java.util.List;
-import javax.swing.*;
 
 public class Cannon {
     private double aimAngle;
     private Point2D.Double position;
     private GameEngine gameEngine;
-
     private List<Ball> storedBalls;
 
     public Cannon(int xPosition, double aimAngle, GameEngine gameEngine) {
@@ -89,5 +85,21 @@ public class Cannon {
         storedBalls.add(b);
         b.setState(BallState.IN_STORE);
         b.setPosition(position);
+    }
+
+    public Point2D.Double project() {
+        Cannon cannon = gameEngine.getGameData().getCannon();
+        double aimAngle = cannon.getAimAngle();
+        double vx = GameSettings.BALL_SPEED/10 * Math.cos(Math.toRadians(aimAngle));
+        double vy = -GameSettings.BALL_SPEED/10 * Math.sin(Math.toRadians(aimAngle));
+        Ball ball = new Ball(cannon.getPosition(), new Point2D.Double(vx, vy), GameSettings.BALL_RADIUS, BallState.IN_PLAY, gameEngine);
+        while (true) {
+            ball.move();
+            if (ball.getPosition().x < ball.getRadius()) break;
+            if (ball.getPosition().x > GameSettings.GAME_WIDTH - ball.getRadius()) break;
+            if (ball.getPosition().y < ball.getRadius()) break;
+            if (gameEngine.firstCollisionPoint(ball) != null) break;
+        }
+        return ball.getPosition();
     }
 }

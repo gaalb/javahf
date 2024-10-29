@@ -3,6 +3,7 @@ import model.GameData;
 import model.GameData.GameState;
 import model.Block.BlockConfig;
 import model.Block.BlockType;
+import model.GameSettings;
 
 import javax.swing.*;
 import java.util.ArrayList;
@@ -21,7 +22,7 @@ public class Main {
         blocks.add(new BlockConfig(2, 7, BlockType.SQUARE));
         SwingUtilities.invokeLater(()-> {
             GameEngine engine = new GameEngine();
-            engine.getGameData().initializeGame(4, blocks, 200);
+            engine.getGameData().initializeGame(GameSettings.STARTING_BALL_NUM, blocks, 200);
         });
     }
 }

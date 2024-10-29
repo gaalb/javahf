@@ -55,6 +55,12 @@ public class GamePanel extends JPanel {
         double angleDeg = cannon.getAimAngle()-90;
         double angle = Math.toRadians(angleDeg);
 
+        g2d.setColor(Color.GREEN);
+        Point2D.Double aimAssistPoint = cannon.project();
+        g2d.drawLine((int)aimAssistPoint.x, (int)aimAssistPoint.y, (int)x, (int)y);
+        int r = (int)GameSettings.BALL_RADIUS;
+        g2d.fillOval((int)aimAssistPoint.x-r, (int)aimAssistPoint.y-r, 2*r, 2*r);
+
         AffineTransform originalTransform = g2d.getTransform();
         g2d.translate(x, y);
         g2d.rotate(-angle);

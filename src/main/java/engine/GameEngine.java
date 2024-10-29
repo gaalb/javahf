@@ -52,13 +52,15 @@ public class GameEngine {
         Point2D.Double unitDirection = new Point2D.Double(direction.x / magnitudeDir, direction.y / magnitudeDir);
         Point2D.Double v = ball.getVelocity();
         double dot = v.x * unitDirection.x + v.y * unitDirection.y;
-        Point2D.Double projection = new Point2D.Double(dot * unitDirection.x, dot*unitDirection.y);
-        Point2D.Double perpendicular = new Point2D.Double(v.x - projection.x, v.y-projection.y);
-        Point2D.Double vNew = new Point2D.Double(perpendicular.x - projection.x, perpendicular.y - projection.y);
-        ball.setVelocity(vNew);
+        if (dot > 0) {
+            Point2D.Double projection = new Point2D.Double(dot * unitDirection.x, dot*unitDirection.y);
+            Point2D.Double perpendicular = new Point2D.Double(v.x - projection.x, v.y-projection.y);
+            Point2D.Double vNew = new Point2D.Double(perpendicular.x - projection.x, perpendicular.y - projection.y);
+            ball.setVelocity(vNew);
+        }
     }
 
-    private SimpleEntry<Block, Point2D.Double> firstCollisionPoint(Ball ball) {
+    public SimpleEntry<Block, Point2D.Double> firstCollisionPoint(Ball ball) {
         // This method returns immediately upon finding a colliding block. Its return is the block
         // with which the ball collides, and the point where they collide (like a tuple in python).
         double minCollisionDistance = ball.getRadius() + GameSettings.BLOCK_WIDTH/Math.sqrt(2) + GameSettings.EPS;

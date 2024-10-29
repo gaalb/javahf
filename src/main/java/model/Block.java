@@ -3,6 +3,7 @@ package model;
 import engine.GameEngine;
 
 import java.awt.*;
+import java.awt.geom.Line2D;
 import java.awt.geom.Point2D;
 
 public class Block extends CollideableObject {
@@ -79,13 +80,11 @@ public class Block extends CollideableObject {
         return spot.getCenter();
     }
 
-    public Point2D.Double[][] getSides() {
+    public Line2D.Double[] getSides() {
         int numCorners = corners.length;
-        Point2D.Double[][] sides = new Point2D.Double[numCorners][2];
-
+        Line2D.Double[] sides = new Line2D.Double[numCorners];
         for (int i = 0; i < numCorners; i++) {
-            sides[i][0] = corners[i];
-            sides[i][1] = corners[(i + 1) % numCorners];
+            sides[i] = new Line2D.Double(corners[i], corners[(i + 1) % numCorners]);
         }
         return sides;
     }

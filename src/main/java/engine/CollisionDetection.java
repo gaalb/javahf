@@ -2,10 +2,10 @@ package engine;
 
 import model.*;
 
+import java.awt.geom.Line2D;
 import java.awt.geom.Point2D;
 import java.util.Collections;
 import java.util.HashSet;
-import java.util.LinkedList;
 import java.util.Set;
 
 
@@ -19,6 +19,29 @@ public class CollisionDetection {
         return Math.abs(l-d1-d2) < GameSettings.EPS;
     }
 
+    public static Point2D.Double lineAndSegment(double angle, Point2D.Double p0, Line2D.Double segment) {
+        //https://www.jeffreythompson.org/collision-detection/line-line.php
+        angle = -Math.toRadians(angle);
+        Point2D.Double p1 = new Point2D.Double(segment.x1, segment.y1);
+        Point2D.Double p2 = new Point2D.Double(segment.x2, segment.y2);
+        double dx = Math.cos(angle);
+        double dy = Math.sin(angle);
+        double segmentDx = p2.x - p1.x;
+        double segmentDy = p2.y - p1.y;
+        double denominator = dx * segmentDy - dy * segmentDx;
+        if (Math.abs(denominator) <= GameSettings.EPS) {  // the lines are parallel
+            return null;
+        }
+        // p0 + t * (dx, dy)
+        double t = ((p1.x - p0.x) * segmentDy - (p1.y - p0.y) * segmentDx) / denominator;
+        // p1 + u * (segmentDx, segmentDy)
+        double u = ((p1.x - p0.x) * dy - (p1.y - p0.y) * dx) / denominator;
+        if (t >= 0 && u >= 0 && u <= 1) {
+            return new Point2D.Double(p0.x + t * dx, p0.y + t * dy);
+        }
+        return null;
+    }
+
     public static Point2D.Double ballBlockCollisionPoint(Ball ball, Block block) {
         // This method checks for collision points, which can be:
         // - A corner
@@ -29,11 +52,11 @@ public class CollisionDetection {
         // Collision between an edge and the ball is according to this:
         // https://www.jeffreythompson.org/collision-detection/line-circle.php
         Point2D.Double c = ball.getPosition();
-        Point2D.Double[][] sides = block.getSides();
+        Line2D.Double[] sides = block.getSides();
         Set<Point2D.Double> collisionPoints = new HashSet<>();
-        for (Point2D.Double[] side: sides) {
-            Point2D.Double p1 = side[0];
-            Point2D.Double p2 = side[1];
+        for (Line2D.Double side: sides) {
+            Point2D.Double p1 = new Point2D.Double(side.x1, side.y1);
+            Point2D.Double p2 = new Point2D.Double(side.x2, side.y2);
             if (p1.distance(c) < ball.getRadius()) {
                 collisionPoints.add(p1);
             }
