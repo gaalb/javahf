@@ -90,8 +90,8 @@ public class Cannon {
     public Point2D.Double project() {
         Cannon cannon = gameEngine.getGameData().getCannon();
         double aimAngle = cannon.getAimAngle();
-        double vx = GameSettings.BALL_SPEED/10 * Math.cos(Math.toRadians(aimAngle));
-        double vy = -GameSettings.BALL_SPEED/10 * Math.sin(Math.toRadians(aimAngle));
+        double vx = GameSettings.BALL_SPEED * Math.cos(Math.toRadians(aimAngle));
+        double vy = -GameSettings.BALL_SPEED * Math.sin(Math.toRadians(aimAngle));
         Ball ball = new Ball(cannon.getPosition(), new Point2D.Double(vx, vy), GameSettings.BALL_RADIUS, BallState.IN_PLAY, gameEngine);
         while (true) {
             ball.move();

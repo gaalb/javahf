@@ -57,6 +57,9 @@ public class GamePanel extends JPanel {
 
         g2d.setColor(Color.GREEN);
         Point2D.Double aimAssistPoint = cannon.project();
+        Stroke dashed = new BasicStroke(3, BasicStroke.CAP_BUTT, BasicStroke.JOIN_BEVEL,
+                0, new float[]{9}, 0);
+        g2d.setStroke(dashed);
         g2d.drawLine((int)aimAssistPoint.x, (int)aimAssistPoint.y, (int)x, (int)y);
         int r = (int)GameSettings.BALL_RADIUS;
         g2d.fillOval((int)aimAssistPoint.x-r, (int)aimAssistPoint.y-r, 2*r, 2*r);

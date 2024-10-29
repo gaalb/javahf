@@ -17,9 +17,12 @@ public class GameEngine {
     private GameFrame gameFrame;
     private GameStateSupervisor gameStateSupervisor;
     private javax.swing.Timer physicsTimer;
+    private int physicsStepsPerTick;
 
     public GameEngine() {
-        physicsTimer = new Timer(GameSettings.PHYSICS_STEP_MS, null);
+        physicsTimer = new Timer(5, null);
+        physicsStepsPerTick = GameSettings.PHYSICS_FREQ * physicsTimer.getDelay()/1000;
+        System.out.println(physicsStepsPerTick);
         physicsTimer.start();
         physicsTimer.addActionListener(this::updateGameState);
         gameData = new GameData(this);
@@ -96,8 +99,10 @@ public class GameEngine {
 
     public void updateGameState(ActionEvent event) {
         List<Ball> ballsInPlay = gameData.getBallsInPlay();
-        for (Ball ball: ballsInPlay) {
-            updateBall(ball);
+        for (int i=0; i<physicsStepsPerTick; i++) {
+            for (Ball ball: ballsInPlay) {
+                updateBall(ball);
+            }
         }
     }
 
