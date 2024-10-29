@@ -47,7 +47,11 @@ public class GameData {
     public void initializeGame(int numberOfBalls, List<BlockConfig> blocks, int cannonPlacement) {
         gameEngine.getGameStateSupervisor().setGameState(GameState.AIMING);
         for (BlockConfig config: blocks) {
-            this.blocks.add(new Block(config.type, spots[config.y][config.x], gameEngine));
+            Block block = new Block(config.type, spots[config.y][config.x], 10, gameEngine);
+            // the block and the spot have mutual references
+            spots[config.y][config.x].setObject(block);
+            this.blocks.add(block);
+
         }
         cannon = new Cannon(cannonPlacement, 90, gameEngine);
         for (int i=0; i<numberOfBalls; i++) {

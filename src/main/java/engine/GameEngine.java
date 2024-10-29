@@ -22,7 +22,6 @@ public class GameEngine {
     public GameEngine() {
         physicsTimer = new Timer(5, null);
         physicsStepsPerTick = GameSettings.PHYSICS_FREQ * physicsTimer.getDelay()/1000;
-        System.out.println(physicsStepsPerTick);
         physicsTimer.start();
         physicsTimer.addActionListener(this::updateGameState);
         gameData = new GameData(this);
@@ -88,6 +87,7 @@ public class GameEngine {
             Block block = blockAndPoint.getKey();
             Point2D.Double collisionPoint = blockAndPoint.getValue();
             bounceBallOffPoint(ball, collisionPoint); // reflect off a block
+            block.decrementHealth(); // decrement HP, and remove if necessary
             // then move away from the block until the collision is resolved
             while (CollisionDetection.ballBlockCollisionPoint(ball, block) != null) {
                 ball.move();

@@ -52,6 +52,7 @@ public class ObjectSpot {
 
     public void setObject(CollideableObject object) {
         this.object = object;
+        object.setSpot(this);
     }
 
     public void clearObject() {

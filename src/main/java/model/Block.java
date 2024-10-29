@@ -5,6 +5,7 @@ import engine.GameEngine;
 import java.awt.*;
 import java.awt.geom.Line2D;
 import java.awt.geom.Point2D;
+import java.util.List;
 
 public class Block extends CollideableObject {
     public enum BlockType {
@@ -16,6 +17,8 @@ public class Block extends CollideableObject {
     }
     private Point2D.Double[] corners;
     private BlockType type;
+    private GameEngine gameEngine;
+    private int health;
 
     private void setCornersToSpot() {
         Point2D.Double[] spotCorners = spot.getCorners();
@@ -46,9 +49,11 @@ public class Block extends CollideableObject {
         }
     }
 
-    public Block(BlockType type, ObjectSpot spot, GameEngine gameEngine) {
+    public Block(BlockType type, ObjectSpot spot, int health, GameEngine gameEngine) {
         super(spot);
         this.type = type;
+        this.health = health;
+        this.gameEngine = gameEngine;
         setCornersToSpot();
     }
 
@@ -111,4 +116,15 @@ public class Block extends CollideableObject {
         }
     }
 
+    public void decrementHealth() {
+        this.health -= 1;
+        if (this.health == 0) {
+            List<Block> blocks = gameEngine.getGameData().getBlocks();
+            blocks.remove(this);
+        }
+    }
+
+    public int getHealth() {
+        return health;
+    }
 }

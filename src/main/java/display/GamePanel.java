@@ -109,12 +109,45 @@ public class GamePanel extends JPanel {
 
     private void paintBlocks(Graphics2D g2d) {
         List<Block> blocks = gameData.getBlocks();
-        for (Block block: blocks) {
+        g2d.setFont(new Font("SansSerif", Font.BOLD, 18)); // Set a larger, bold font for the health text
+
+        for (Block block : blocks) {
             g2d.setColor(Color.BLUE);
             g2d.fillPolygon(block.getPolygon());
             g2d.setColor(Color.BLACK);
             g2d.setStroke(new BasicStroke(2));
             g2d.drawPolygon(block.getPolygon());
+
+            String healthText = String.valueOf(block.getHealth());
+            FontMetrics fm = g2d.getFontMetrics();
+            int textWidth = fm.stringWidth(healthText);
+            int textHeight = fm.getAscent();
+
+            g2d.setColor(Color.YELLOW);
+
+            Point2D.Double position;
+            switch (block.getType()) {
+                case SQUARE:
+                    position = block.getPosition();
+                    g2d.drawString(healthText, (int)position.x - textWidth / 2, (int)position.y + textHeight / 2);
+                    break;
+                case TRIANGLE_LOWER_LEFT:
+                case TRIANGLE_LOWER_RIGHT:
+                    position = new Point2D.Double(
+                            (block.getCorners()[0].x + block.getCorners()[1].x + block.getCorners()[2].x) / 3,
+                            (block.getCorners()[0].y + block.getCorners()[1].y + block.getCorners()[2].y) / 3
+                    );
+                    g2d.drawString(healthText, (int)position.x - textWidth / 2, (int)position.y + textHeight / 2);
+                    break;
+                case TRIANGLE_UPPER_LEFT:
+                case TRIANGLE_UPPER_RIGHT:
+                    position = new Point2D.Double(
+                            (block.getCorners()[0].x + block.getCorners()[1].x + block.getCorners()[2].x) / 3,
+                            (block.getCorners()[0].y + block.getCorners()[1].y + block.getCorners()[2].y) / 3
+                    );
+                    g2d.drawString(healthText, (int)position.x - textWidth / 2, (int)position.y);
+                    break;
+            }
         }
     }
 
