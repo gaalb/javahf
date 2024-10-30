@@ -7,7 +7,7 @@ public class Main {
     public static void main(String[] args) {
         SwingUtilities.invokeLater(()-> {
             Game game = new Game();
-            game.getGameData().initializeGame(GameSettings.DEFAULT_CONFIG());
+            game.initializeGame(GameSettings.DEFAULT_CONFIG());
         });
     }
 }

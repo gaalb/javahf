@@ -23,8 +23,8 @@ public class GameData {
         }
     }
 
-    private final Player player;
-    private final ObjectSpot[][] spots;
+    private Player player;
+    private final ObjectSpot[][] spots;  // ObjectSpots are static for the whole game duration, hence array not list
     private final List<CollideableObject> objects;
     private final List<Ball> balls;
     private final Game game;
@@ -36,8 +36,8 @@ public class GameData {
         player = new Player("GBotond", game);
         spots = new ObjectSpot[GameSettings.BLOCK_ROWS][GameSettings.BLOCK_COLUMNS];
         initializeSpots();
-        objects = new LinkedList<>();
-        balls = new LinkedList<>();
+        objects = new LinkedList<>();  // contains all CollideableObjects: Blocks or Boons
+        balls = new LinkedList<>();  // contains all Balls: IN_STORE, IN_PLAY or RETURNED
     }
 
     public List<CollideableObject> getObjects() {
@@ -45,6 +45,7 @@ public class GameData {
     }
 
     public List<Block> getBlocks() {
+        // Some CollideableObjects in objects are Blocks, some are Boons: return the Blocks.
         List<Block> blocks = new LinkedList<>();
         for (CollideableObject object: objects) {
             if (object instanceof Block) {
@@ -55,6 +56,7 @@ public class GameData {
     }
 
     public List<Boon> getBoons() {
+        // Some CollideableObjects in objects are Blocks, some are Boons: return the Boons.
         List<Boon> boons = new LinkedList<>();
         for (CollideableObject object: objects) {
             if (object instanceof Boon) {
@@ -70,7 +72,6 @@ public class GameData {
                 double centerX = (col * GameSettings.BLOCK_WIDTH) + (GameSettings.BLOCK_WIDTH / 2.0);
                 double centerY = (row * GameSettings.BLOCK_HEIGHT) + (GameSettings.BLOCK_HEIGHT / 2.0);
                 Point2D.Double center = new Point2D.Double(centerX, centerY);
-
                 spots[row][col] = new ObjectSpot(center, GameSettings.BLOCK_WIDTH);
             }
         }
@@ -132,20 +133,21 @@ public class GameData {
 
     public void addBlock(BlockConfig config) {
         Block block = new Block(config.type, spots[config.y][config.x], config.hp, game);
-        // the block and the spot have mutual references
+        // the block and the spot have mutual references. The reference to the spot is
+        // stored in the Block constructor, but the reference to the Block must then
+        // be set in the spot:
         spots[config.y][config.x].setObject(block);
         this.objects.add(block);
     }
 
     public void destroyObject(CollideableObject object) {
-        object.getSpot().clearObject();
-        object.setSpot(null);
-        objects.remove(object);
+        object.getSpot().clearObject(); // destroy the reference to the Object in the Spot
+        object.setSpot(null); // destroy the reference to the Spot in the Object
+        objects.remove(object); // remove the reference to the Object from the GameData
     }
 
-    public void initializeGame(GameConfig gameConfig) {
+    public void initialize(GameConfig gameConfig) {
         clearObjects();
-        System.out.println("Cleared objects.");
         balls.clear();
         for (BlockConfig config: gameConfig.blockConfigs) {
             addBlock(config);
@@ -158,6 +160,5 @@ public class GameData {
             balls.add(b);
             cannon.storeBall(b);
         }
-        game.setGameState(GameState.AIMING);
     }
 }

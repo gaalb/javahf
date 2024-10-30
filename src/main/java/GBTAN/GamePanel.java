@@ -8,9 +8,9 @@ import java.util.List;
 import GBTAN.GameData.GameState;
 
 public class GamePanel extends JPanel {
-    private Dimension dimension;
-    private Game game;
-    private GameData gameData;
+    private final Dimension dimension;
+    private final Game game;
+    private final GameData gameData;
     private JButton newGameButton;
 
     public GamePanel(Game game) {
@@ -19,8 +19,12 @@ public class GamePanel extends JPanel {
         this.setDoubleBuffered(true);
         dimension = new Dimension(GameSettings.GAME_WIDTH, GameSettings.GAME_HEIGHT);
         this.setPreferredSize(dimension);
-        // Setup layour and newGameButton, which is always present in memory, just not always visualized
         setLayout(new BoxLayout(this, BoxLayout.Y_AXIS));
+        setupNewGameButton();
+    }
+
+    public void setupNewGameButton() {
+        // The newGameButton is always present in memory, but is hidden and inactive normally
         newGameButton = new JButton("NEW GAME");
         newGameButton.setFont(new Font("Arial", Font.BOLD, 24));
         newGameButton.setAlignmentX(Component.CENTER_ALIGNMENT);
@@ -42,7 +46,7 @@ public class GamePanel extends JPanel {
     private void paintObjectSpots(Graphics2D g2d) {
         g2d.setColor(Color.LIGHT_GRAY);
         // Loop through each spot in the grid and draw a small dot at the center
-        for (int row = 0; row < GameSettings.BLOCK_ROWS-1; row++) {
+        for (int row = 0; row < GameSettings.BLOCK_ROWS-1; row++) { // last row has no dots
             for (int col = 0; col < GameSettings.BLOCK_COLUMNS; col++) {
                 ObjectSpot spot = gameData.getSpots()[row][col];
                 Point2D.Double center = spot.getCenter();
@@ -56,6 +60,7 @@ public class GamePanel extends JPanel {
     }
 
     private void paintAimAssist(Graphics2D g2d) {
+        // Paints the projected path of the balls as calculated by Cannon
         Cannon cannon = gameData.getCannon();
         double x = cannon.getPosition().getX();
         double y = cannon.getPosition().getY();
@@ -79,27 +84,20 @@ public class GamePanel extends JPanel {
         double angleDeg = cannon.getAimAngle()-90;
         double angle = Math.toRadians(angleDeg);
 
+        // Paint the Barrel of the Cannon, which is a triangle pointing away from the aimAngle,
+        // hence the rotation, and its tip being ad the Cannon's location, hence the translation
         AffineTransform originalTransform = g2d.getTransform();
         g2d.translate(x, y);
         g2d.rotate(-angle);
-
-        int[] xPoints = {
-                0,
-                -triangleWidth / 2,
-                triangleWidth / 2
-        };
-        int[] yPoints = {
-                circleRadius,
-                -triangleHeight+circleRadius,
-                -triangleHeight+circleRadius
-        };
+        int[] xPoints = {0, -triangleWidth / 2, triangleWidth / 2};
+        int[] yPoints = {circleRadius,-triangleHeight+circleRadius,-triangleHeight+circleRadius};
         g2d.setColor(Color.RED);
         g2d.fillPolygon(xPoints, yPoints, 3);
         g2d.setColor(Color.BLACK);
         g2d.setStroke(new BasicStroke(2));
         g2d.drawPolygon(xPoints, yPoints, 3);
+        // Delete the transformation we just used, to avoid messing with the other drawing methods.
         g2d.setTransform(originalTransform);
-
         g2d.setColor(Color.RED);
         g2d.fillOval((int)x-circleRadius, (int)y-circleRadius, circleRadius*2, circleRadius*2);
         g2d.setColor(Color.BLACK);
@@ -124,23 +122,21 @@ public class GamePanel extends JPanel {
 
     private void paintBlocks(Graphics2D g2d) {
         List<Block> blocks = gameData.getBlocks();
-        g2d.setFont(new Font("SansSerif", Font.BOLD, 18)); // Set a larger, bold font for the health text
+        g2d.setFont(new Font("SansSerif", Font.BOLD, 18)); // Font for the HP
 
         for (Block block : blocks) {
             g2d.setColor(Color.BLUE);
-            g2d.fillPolygon(block.getPolygon());
+            g2d.fillPolygon(block.getPolygon()); // body
             g2d.setColor(Color.BLACK);
             g2d.setStroke(new BasicStroke(2));
-            g2d.drawPolygon(block.getPolygon());
-
-            String healthText = String.valueOf(block.getHealth());
+            g2d.drawPolygon(block.getPolygon()); // outline
+            String healthText = String.valueOf(block.getHealth()); // HP
             FontMetrics fm = g2d.getFontMetrics();
             int textWidth = fm.stringWidth(healthText);
             int textHeight = fm.getAscent();
-
             g2d.setColor(Color.YELLOW);
-
             Point2D.Double position;
+            // Depending on the type of the block, we must place the text in a different position to look nice
             switch (block.getType()) {
                 case SQUARE:
                     position = block.getPosition();
@@ -174,12 +170,7 @@ public class GamePanel extends JPanel {
         int x = (getWidth() - metrics.stringWidth(message)) / 2;
         int y = (getHeight() - metrics.getHeight()) / 2;
         g2d.setColor(Color.BLACK);
-        g2d.drawString(message, x + 3, y + 3);
-        g2d.setColor(Color.BLACK);
-        g2d.drawString(message, x - 1, y);
-        g2d.drawString(message, x + 1, y);
-        g2d.drawString(message, x, y - 1);
-        g2d.drawString(message, x, y + 1);
+        g2d.drawString(message, x + 3, y + 3); // Draw shadow for the text (looks nice)
         g2d.setColor(Color.RED);
         g2d.drawString(message, x, y);
         newGameButton.setVisible(true);

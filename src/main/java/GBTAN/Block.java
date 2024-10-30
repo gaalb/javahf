@@ -31,6 +31,9 @@ public class Block extends CollideableObject {
     private int health;
 
     private void setCornersToSpot() {
+        // The corners of a Block are determined by its type (shape) and the
+        // corners of the containing spot. If we wanted to make the block
+        // smaller than the spot it's in, this is the method to modify.
         Point2D.Double[] spotCorners = spot.getCorners();
         switch (type) {
             case TRIANGLE_LOWER_LEFT:
@@ -113,7 +116,7 @@ public class Block extends CollideableObject {
 
     public void decrementHealth() {
         this.health -= 1;
-        if (this.health == 0) {
+        if (this.health <= 0) {
             game.getGameData().destroyObject(this);
         }
     }

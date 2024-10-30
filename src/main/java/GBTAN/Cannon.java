@@ -12,7 +12,7 @@ import javax.swing.*;
 public class Cannon {
     private double aimAngle;
     private Point2D.Double position;
-    private Game game;
+    private final Game game;
     private List<Ball> storedBalls;
 
     public Cannon(int xPosition, double aimAngle, Game game) {
@@ -55,6 +55,10 @@ public class Cannon {
     }
 
     private class FireHandler implements ActionListener {
+        // An action listener that subscribes to the timer provided to it.
+        // It fires a single ball after framesPerShot number of times
+        // the timer ticks, until the cannon is empty. At this point
+        // it stops listening to the timer.
         private int frameCounter;
         private int framesPerShot;
         private Timer timer;
@@ -85,17 +89,21 @@ public class Cannon {
     }
 
     public void storeBall(Ball b) {
+        // Returned balls can be stored by calling this method.
         storedBalls.add(b);
         b.setState(BallState.IN_STORE);
         b.setPosition(position);
     }
 
     public Point2D.Double project() {
+        // Projects forward a non-player Ball, to get the first point of contact with the walls or
+        // a Block.
         Cannon cannon = game.getGameData().getCannon();
         double aimAngle = cannon.getAimAngle();
         double vx = GameSettings.BALL_SPEED * Math.cos(Math.toRadians(aimAngle));
         double vy = -GameSettings.BALL_SPEED * Math.sin(Math.toRadians(aimAngle));
         Ball ball = new Ball(cannon.getPosition(), new Point2D.Double(vx, vy), GameSettings.BALL_RADIUS, BallState.IN_PLAY, game);
+        // Move the ball until a collision is registered
         while (true) {
             ball.move();
             if (ball.getPosition().x < ball.getRadius()) break;

@@ -25,6 +25,8 @@ public class GameSettings {
     public static final int STARTING_BALL_NUM = 4;
     public static final int FRAMES_BETWEEN_BALLS = 8;
     public static final double EPS = 0.1;
+    public static final double MIN_AIM_ANGLE = 20;
+
     public static GameConfig DEFAULT_CONFIG() {
         List<BlockConfig> blocks = new ArrayList<>();
         blocks.add(new BlockConfig(0, 0, 10, BlockType.TRIANGLE_UPPER_LEFT));

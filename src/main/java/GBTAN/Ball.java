@@ -11,7 +11,7 @@ public class Ball {
     private Point2D.Double velocity;
     private double radius;
     private BallState state;
-    private Game game;
+    private final Game game;
 
     public Ball(Point2D.Double position, Point2D.Double velocity, double radius, BallState state, Game game) {
         this.game = game;
@@ -73,14 +73,18 @@ public class Ball {
     }
 
     public void bounceOffPoint(Point2D.Double point) {
-        // only changes velocity direction, doesn't change position
         // Calculates the portion of the ball's velocity which is parallel
         // to the line drawn between the ball's center and the collision
         // point, and inverts that component.
+        // Only changes velocity direction, doesn't change position: that is the job for move()
         Point2D.Double direction = new Point2D.Double(point.x-position.x, point.y-position.y);
         double magnitudeDir = Math.sqrt(direction.x * direction.x + direction.y * direction.y);
         Point2D.Double unitDirection = new Point2D.Double(direction.x / magnitudeDir, direction.y / magnitudeDir);
         double dot = velocity.x * unitDirection.x + velocity.y * unitDirection.y;
+        // If dot is negative, that means that the direction of the ball is away from the
+        // intersecting/connecting point. This happens because of the inaccuracies in
+        // the collision detection, and is not physically feasible. When this happens,
+        // the bounce is ignored, and the direction isn't changed.
         if (dot > 0) {
             Point2D.Double projection = new Point2D.Double(dot * unitDirection.x, dot*unitDirection.y);
             Point2D.Double perpendicular = new Point2D.Double(velocity.x - projection.x, velocity.y-projection.y);

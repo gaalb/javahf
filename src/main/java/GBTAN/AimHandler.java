@@ -6,7 +6,7 @@ import java.awt.event.MouseEvent;
 import java.awt.geom.Point2D;
 
 public class AimHandler extends MouseAdapter {
-    private Game game;
+    private final Game game;
     private boolean isAiming;
     public AimHandler(Game game) {
         this.isAiming = false;
@@ -20,7 +20,7 @@ public class AimHandler extends MouseAdapter {
         double dy = cannonPosition.getY() - p.getY();
         double angleRad = Math.atan2(dy, dx);
         double angleDeg = Math.toDegrees(angleRad);
-        cannon.setAimAngle(Math.max(30, Math.min(150, angleDeg)));
+        cannon.setAimAngle(Math.max(GameSettings.MIN_AIM_ANGLE, Math.min(180-GameSettings.MIN_AIM_ANGLE, angleDeg)));
         game.getGameFrame().getGamePanel().repaint();
     }
 

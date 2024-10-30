@@ -7,14 +7,16 @@ import java.awt.geom.Point2D;
 import java.util.*;
 
 public class PhysicsEngine {
-    private Game game;
-    private GameData gameData;
+    private final Game game;
+    private final GameData gameData;
     private javax.swing.Timer physicsTimer;
     private int physicsStepsPerTick;
 
     public PhysicsEngine(Game game) {
         this.game = game;
         this.gameData = game.getGameData();
+        // The fastest a timer can tick in swing is 1ms, we may want to calculate physics more often
+        // than that. We use a timer that's slower, and run physics more than once per tick.
         physicsTimer = new Timer(1000/GameSettings.PHYSICS_TIMER_FREQ, this::updatePhysics);
         physicsStepsPerTick = GameSettings.PHYSICS_FREQ * physicsTimer.getDelay()/1000;
         physicsTimer.start();
@@ -85,13 +87,14 @@ public class PhysicsEngine {
         Point2D.Double c = ball.getPosition();
         Line2D.Double[] sides = block.getSides();
         Set<Point2D.Double> collisionPoints = new HashSet<>();
+        // We calculate collisions for each side of the Block (polygon)
         for (Line2D.Double side: sides) {
             Point2D.Double p1 = new Point2D.Double(side.x1, side.y1);
             Point2D.Double p2 = new Point2D.Double(side.x2, side.y2);
-            if (p1.distance(c) < ball.getRadius()) {
+            if (p1.distance(c) < ball.getRadius()) {  // they collide in the 1st corner
                 collisionPoints.add(p1);
             }
-            if (p2.distance(c) < ball.getRadius()) {
+            if (p2.distance(c) < ball.getRadius()) {  // they collide in the 2nd corner
                 collisionPoints.add(p2);
             }
             double cx = c.x;
@@ -102,13 +105,12 @@ public class PhysicsEngine {
             double y2 = p2.y;
             double l = p1.distance(p2);
             double dot = (((cx-x1)*(x2-x1))+((cy-y1)*(y2-y1)))/(l*l);
-            double closestX = x1 + dot*(x2-x1);
-            double closestY = y1 + dot*(y2-y1);
-            Point2D.Double closest = new Point2D.Double(closestX, closestY);
+            Point2D.Double closest = new Point2D.Double(x1 + dot*(x2-x1), y1 + dot*(y2-y1));
             if (pointOnLine(closest, p1, p2) && ball.getPosition().distance(closest) <= ball.getRadius()) {
                 collisionPoints.add(closest);
             }
         }
+        // We might have several collision points by now. Use the one that's closest to the ball's center.
         if (!collisionPoints.isEmpty()) {
             return Collections.min(collisionPoints, (p1, p2) -> {
                 Point2D.Double p0 = ball.getPosition();
@@ -120,7 +122,6 @@ public class PhysicsEngine {
     }
 
     private void returnBallToCannon(Ball ball) {
-        Cannon cannon = gameData.getCannon();
         if (gameData.getBallsReturned().isEmpty()) {
             gameData.getCannon().setPosition(ball.getPosition().x);
         }
@@ -128,8 +129,10 @@ public class PhysicsEngine {
     }
 
     public AbstractMap.SimpleEntry<Block, Point2D.Double> firstCollisionPoint(Ball ball) {
-        // This method returns immediately upon finding a colliding block. Its return is the block
+        // This method checks for collisions among all the blocks within minimum collision distance,
+        // and returns immediately upon finding a colliding block. Its return is the block
         // with which the ball collides, and the point where they collide (like a tuple in python).
+        // If no blocks collide, return null.
         double minCollisionDistance = ball.getRadius() + GameSettings.BLOCK_WIDTH/Math.sqrt(2) + GameSettings.EPS;
         for (Block block: gameData.getBlocks()) {
             if (ball.getPosition().distance(block.getPosition()) <= minCollisionDistance) {
@@ -146,13 +149,13 @@ public class PhysicsEngine {
         // Each round we leave the ball in a state where it doesn't collide with anything. This way,
         // at the start of a new round, we don't need to check for collisions, only after moving.
         ball.move();  // since we moved, we may now have a collision on our hands, or we may have left the panel
-        if (ball.getPosition().y > GameSettings.GAME_HEIGHT + ball.getRadius()) {
+        if (ball.getPosition().y > GameSettings.GAME_HEIGHT + ball.getRadius()) {  // Ball exited the play area
             returnBallToCannon(ball);
             return;
         }
         ball.bounceOffWalls();
         AbstractMap.SimpleEntry<Block, Point2D.Double> blockAndPoint = firstCollisionPoint(ball);
-        while (blockAndPoint !=  null) { // while any collisions are left
+        while (blockAndPoint !=  null) { // while any collisions are left, handle them 1 by 1
             Block block = blockAndPoint.getKey();
             Point2D.Double collisionPoint = blockAndPoint.getValue();
             ball.bounceOffPoint(collisionPoint); // reflect off a block
