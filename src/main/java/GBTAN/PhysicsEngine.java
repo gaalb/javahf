@@ -1,6 +1,5 @@
 package GBTAN;
 
-import javax.swing.*;
 import javax.swing.Timer;
 import java.awt.event.ActionEvent;
 import java.awt.geom.Line2D;
@@ -16,7 +15,7 @@ public class PhysicsEngine {
     public PhysicsEngine(Game game) {
         this.game = game;
         this.gameData = game.getGameData();
-        physicsTimer = new Timer(GameSettings.PHYSICS_TIMER_STEP, this::updatePhysics);
+        physicsTimer = new Timer(1000/GameSettings.PHYSICS_TIMER_FREQ, this::updatePhysics);
         physicsStepsPerTick = GameSettings.PHYSICS_FREQ * physicsTimer.getDelay()/1000;
         physicsTimer.start();
     }
@@ -151,6 +150,7 @@ public class PhysicsEngine {
             returnBallToCannon(ball);
             return;
         }
+        ball.bounceOffWalls();
         AbstractMap.SimpleEntry<Block, Point2D.Double> blockAndPoint = firstCollisionPoint(ball);
         while (blockAndPoint !=  null) { // while any collisions are left
             Block block = blockAndPoint.getKey();

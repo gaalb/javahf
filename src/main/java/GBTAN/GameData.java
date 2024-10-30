@@ -145,8 +145,8 @@ public class GameData {
 
     public void initializeGame(GameConfig gameConfig) {
         clearObjects();
+        System.out.println("Cleared objects.");
         balls.clear();
-        game.setGameState(GameState.AIMING);
         for (BlockConfig config: gameConfig.blockConfigs) {
             addBlock(config);
         }
@@ -158,5 +158,6 @@ public class GameData {
             balls.add(b);
             cannon.storeBall(b);
         }
+        game.setGameState(GameState.AIMING);
     }
 }

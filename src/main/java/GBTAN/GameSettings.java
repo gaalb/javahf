@@ -19,7 +19,7 @@ public class GameSettings {
     public static final int GAME_HEIGHT = BLOCK_HEIGHT*BLOCK_ROWS;
     public static final int GAME_DIAMETER = (int)Math.sqrt(Math.pow(GAME_HEIGHT, 2) + Math.pow(GAME_WIDTH, 2));
     public static final int FPS = 100;
-    public static final int PHYSICS_TIMER_STEP = 200;
+    public static final int PHYSICS_TIMER_FREQ = 200;
     public static final int PHYSICS_FREQ = 2000;
     public static final double BALL_SPEED = 0.7;
     public static final int STARTING_BALL_NUM = 4;

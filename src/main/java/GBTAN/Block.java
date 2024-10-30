@@ -78,7 +78,9 @@ public class Block extends CollideableObject {
     @Override
     public void setSpot(ObjectSpot spot) {
         super.setSpot(spot);
-        setCornersToSpot();
+        if (spot != null) {
+            setCornersToSpot();
+        }
     }
 
     public Point2D.Double[] getCorners() {

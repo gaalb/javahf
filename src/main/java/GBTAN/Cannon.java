@@ -81,6 +81,7 @@ public class Cannon {
     public void fireAll() {
         Timer timer = game.getPhysicsEngine().getPhysicsTimer();
         FireHandler fireHandler = new FireHandler(GameSettings.FRAMES_BETWEEN_BALLS, timer);
+        timer.addActionListener(fireHandler);
     }
 
     public void storeBall(Ball b) {
