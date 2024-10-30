@@ -39,6 +39,10 @@ public class GameStateSupervisor {
         gameFrame.getGamePanel().addMouseMotionListener(aimHandler);
     }
 
+    private void setGameOver() {
+        gameEngine.stopTimer();
+    }
+
     public void setGameState(GameState newState) {
         gameData.setGameState(newState);
         if (newState == GameState.PLAYING) {
@@ -47,6 +51,9 @@ public class GameStateSupervisor {
         if (newState == GameState.AIMING) {
             setAiming();
         }
+        if (newState == GameState.GAME_OVER) {
+            setGameOver();
+        }
     }
 
     public void check(ActionEvent ae) {
@@ -54,12 +61,6 @@ public class GameStateSupervisor {
             if (gameData.getBallsInPlay().isEmpty()) {
                 setGameState(GameState.AIMING);
                 ObjectSpot[][] spots = gameData.getSpots();
-                // TODO: clear last row for now, handle game over later
-                ObjectSpot[] lastRow = spots[spots.length-1];
-                List<Block> blocks = gameEngine.getGameData().getBlocks();
-                for (ObjectSpot spot: lastRow) {
-                    blocks.remove(spot.getObject());
-                }
                 for (int i = spots.length-1; i > 0; i--) {
                     ObjectSpot[] upperRow = spots[i-1];
                     ObjectSpot[] lowerRow = spots[i];
@@ -72,6 +73,13 @@ public class GameStateSupervisor {
                 }
             }
         } else if (gameData.getGameState() == GameState.AIMING) {
+            ObjectSpot[] lastRow = gameData.getSpots()[GameSettings.BLOCK_ROWS-1];
+            for (ObjectSpot spot: lastRow) {
+                if (spot.getObject() != null) {
+                    setGameState(GameState.GAME_OVER);
+                    return;
+                }
+            }
             if (!gameData.getBallsInPlay().isEmpty()) {
                 setGameState(GameState.PLAYING);
             }

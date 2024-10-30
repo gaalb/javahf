@@ -32,7 +32,7 @@ public class GamePanel extends JPanel {
     private void paintObjectSpots(Graphics2D g2d) {
         g2d.setColor(Color.LIGHT_GRAY);
         // Loop through each spot in the grid and draw a small dot at the center
-        for (int row = 0; row < GameSettings.BLOCK_ROWS; row++) {
+        for (int row = 0; row < GameSettings.BLOCK_ROWS-1; row++) {
             for (int col = 0; col < GameSettings.BLOCK_COLUMNS; col++) {
                 ObjectSpot spot = gameData.getSpots()[row][col];
                 Point2D.Double center = spot.getCenter();
@@ -151,6 +151,24 @@ public class GamePanel extends JPanel {
         }
     }
 
+    private void paintGameOver(Graphics2D g2d) {
+        Font font = new Font("Arial", Font.BOLD, 48);
+        g2d.setFont(font);
+        FontMetrics metrics = g2d.getFontMetrics(font);
+        String message = "GAME OVER";
+        int x = (getWidth() - metrics.stringWidth(message)) / 2;
+        int y = (getHeight() - metrics.getHeight()) / 2 + metrics.getAscent();
+        g2d.setColor(Color.BLACK);
+        g2d.drawString(message, x + 3, y + 3);
+        g2d.setColor(Color.BLACK);
+        g2d.drawString(message, x - 1, y);
+        g2d.drawString(message, x + 1, y);
+        g2d.drawString(message, x, y - 1);
+        g2d.drawString(message, x, y + 1);
+        g2d.setColor(Color.RED);
+        g2d.drawString(message, x, y);
+    }
+
     @Override
     protected void paintComponent(Graphics g) {
         super.paintComponent(g);
@@ -159,8 +177,12 @@ public class GamePanel extends JPanel {
         paintBackground(g2d);
         paintObjectSpots(g2d);
         paintBlocks(g2d);
-        paintBalls(g2d);
-        paintCannon(g2d);
+        if (gameData.getGameState() != GameData.GameState.GAME_OVER) {
+            paintBalls(g2d);
+            paintCannon(g2d);
+        } else {
+            this.paintGameOver(g2d);
+        }
     }
 
 }

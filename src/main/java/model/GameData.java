@@ -4,6 +4,7 @@ import engine.GameEngine;
 import model.Ball.BallState;
 import model.Block.BlockType;
 import model.Block.BlockConfig;
+import model.Cannon.CannonConfig;
 
 import java.awt.geom.Point2D;
 import java.util.LinkedList;
@@ -17,7 +18,7 @@ public class GameData {
 
     private final Player player;
     private final ObjectSpot[][] spots;
-    private final List<Block> blocks;
+    private final List<CollideableObject> objects;
     private final List<Ball> balls;
     private final GameEngine gameEngine;
     private GameState gameState;
@@ -28,8 +29,32 @@ public class GameData {
         player = new Player("GBotond", gameEngine);
         spots = new ObjectSpot[GameSettings.BLOCK_ROWS][GameSettings.BLOCK_COLUMNS];
         initializeSpots();
-        blocks = new LinkedList<>();
+        objects = new LinkedList<>();
         balls = new LinkedList<>();
+    }
+
+    public List<CollideableObject> getObjects() {
+        return objects;
+    }
+
+    public List<Block> getBlocks() {
+        List<Block> blocks = new LinkedList<>();
+        for (CollideableObject object: objects) {
+            if (object instanceof Block) {
+                blocks.add((Block)object);
+            }
+        }
+        return blocks;
+    }
+
+    public List<Boon> getBoons() {
+        List<Boon> boons = new LinkedList<>();
+        for (CollideableObject object: objects) {
+            if (object instanceof Boon) {
+                boons.add((Boon)object);
+            }
+        }
+        return boons;
     }
 
     private void initializeSpots() {
@@ -41,25 +66,6 @@ public class GameData {
 
                 spots[row][col] = new ObjectSpot(center, GameSettings.BLOCK_WIDTH);
             }
-        }
-    }
-
-    public void initializeGame(int numberOfBalls, List<BlockConfig> blocks, int cannonPlacement) {
-        gameEngine.getGameStateSupervisor().setGameState(GameState.AIMING);
-        for (BlockConfig config: blocks) {
-            Block block = new Block(config.type, spots[config.y][config.x], 10, gameEngine);
-            // the block and the spot have mutual references
-            spots[config.y][config.x].setObject(block);
-            this.blocks.add(block);
-
-        }
-        cannon = new Cannon(cannonPlacement, 90, gameEngine);
-        for (int i=0; i<numberOfBalls; i++) {
-            Point2D.Double p = new Point2D.Double(0.5*GameSettings.GAME_WIDTH, GameSettings.GAME_HEIGHT);
-            Point2D.Double v = new Point2D.Double(0,0);
-            Ball b = new Ball(p, v, GameSettings.BALL_RADIUS, Ball.BallState.IN_STORE, gameEngine);
-            balls.add(b);
-            cannon.storeBall(b);
         }
     }
 
@@ -111,7 +117,42 @@ public class GameData {
         this.gameState = gameState;
     }
 
-    public List<Block> getBlocks() {
-        return blocks;
+    public static class GameConfig {
+        public CannonConfig cannonConfig;
+        public List<BlockConfig> blockConfigs;
+        public GameConfig(CannonConfig cannonConfig, List<BlockConfig> blockConfigs) {
+            this.cannonConfig = cannonConfig;
+            this.blockConfigs = blockConfigs;
+        }
+    }
+
+    public void clearObjects() {
+        for (ObjectSpot[] row: spots) {
+            for (ObjectSpot spot: row) {
+                if (spot.getObject() != null) {
+                    spot.getObject().destroy();
+                }
+            }
+        }
+    }
+
+    public void initializeGame(GameConfig gameConfig) {
+        clearObjects();
+        gameEngine.getGameStateSupervisor().setGameState(GameState.AIMING);
+        for (BlockConfig config: gameConfig.blockConfigs) {
+            Block block = new Block(config.type, spots[config.y][config.x], config.hp, gameEngine);
+            // the block and the spot have mutual references
+            spots[config.y][config.x].setObject(block);
+            this.objects.add(block);
+
+        }
+        cannon = new Cannon(gameConfig.cannonConfig.x, gameConfig.cannonConfig.angle, gameEngine);
+        for (int i=0; i<gameConfig.cannonConfig.ballNum; i++) {
+            Point2D.Double p = new Point2D.Double(0.5*GameSettings.GAME_WIDTH, GameSettings.GAME_HEIGHT);
+            Point2D.Double v = new Point2D.Double(0,0);
+            Ball b = new Ball(p, v, GameSettings.BALL_RADIUS, Ball.BallState.IN_STORE, gameEngine);
+            balls.add(b);
+            cannon.storeBall(b);
+        }
     }
 }

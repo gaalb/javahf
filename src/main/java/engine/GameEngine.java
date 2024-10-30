@@ -121,4 +121,12 @@ public class GameEngine {
     public GameStateSupervisor getGameStateSupervisor() {
         return gameStateSupervisor;
     }
+
+    public void startTimer() {
+        physicsTimer.start();
+    }
+
+    public void stopTimer() {
+        physicsTimer.stop();
+    }
 }

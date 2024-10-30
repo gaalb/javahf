@@ -1,5 +1,6 @@
 package model;
 
+import engine.CollisionDetection;
 import engine.GameEngine;
 
 import java.awt.*;
@@ -17,7 +18,6 @@ public class Block extends CollideableObject {
     }
     private Point2D.Double[] corners;
     private BlockType type;
-    private GameEngine gameEngine;
     private int health;
 
     private void setCornersToSpot() {
@@ -50,10 +50,9 @@ public class Block extends CollideableObject {
     }
 
     public Block(BlockType type, ObjectSpot spot, int health, GameEngine gameEngine) {
-        super(spot);
+        super(spot, gameEngine);
         this.type = type;
         this.health = health;
-        this.gameEngine = gameEngine;
         setCornersToSpot();
     }
 
@@ -78,7 +77,7 @@ public class Block extends CollideableObject {
 
     @Override
     public Point2D.Double getCollisionPoint(Ball ball) {
-        return new Point2D.Double(0, 0);  // TODO
+        return CollisionDetection.ballBlockCollisionPoint(ball, this);
     }
 
     public Point2D.Double getPosition() {
@@ -106,21 +105,22 @@ public class Block extends CollideableObject {
     }
 
     public static class BlockConfig {
-        BlockType type;
-        int x;
-        int y;
-        public BlockConfig(int x, int y, BlockType type) {
+        public BlockType type;
+        public int x;
+        public int y;
+        public int hp;
+        public BlockConfig(int x, int y, int hp, BlockType type) {
             this.x = x;
             this.y = y;
             this.type = type;
+            this.hp = hp;
         }
     }
 
     public void decrementHealth() {
         this.health -= 1;
         if (this.health == 0) {
-            List<Block> blocks = gameEngine.getGameData().getBlocks();
-            blocks.remove(this);
+            destroy();
         }
     }
 
