@@ -5,6 +5,7 @@ import engine.GameEngine;
 import model.*;
 import model.GameData.GameState;
 
+import javax.swing.*;
 import java.awt.event.ActionEvent;
 import java.util.List;
 
@@ -36,10 +37,12 @@ public class GameStateSupervisor {
 
     private void setPlaying() {
         gameFrame.getGamePanel().removeMouseListener(aimHandler);
-        gameFrame.getGamePanel().addMouseMotionListener(aimHandler);
+        gameFrame.getGamePanel().removeMouseMotionListener(aimHandler);
     }
 
     private void setGameOver() {
+        gameFrame.getGamePanel().removeMouseListener(aimHandler);
+        gameFrame.getGamePanel().removeMouseMotionListener(aimHandler);
         gameEngine.stopTimer();
     }
 
@@ -77,6 +80,10 @@ public class GameStateSupervisor {
             for (ObjectSpot spot: lastRow) {
                 if (spot.getObject() != null) {
                     setGameState(GameState.GAME_OVER);
+                    JButton newGameButton = gameEngine.getGameFrame().getGamePanel().getNewGameButton();
+                    newGameButton.addActionListener(e-> {
+                        gameData.initializeGame(GameSettings.DEFAULT_CONFIG());
+                    });
                     return;
                 }
             }

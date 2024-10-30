@@ -14,6 +14,7 @@ public class GamePanel extends JPanel {
     private Dimension dimension;
     private GameEngine gameEngine;
     private GameData gameData;
+    private JButton newGameButton;
 
 
     public GamePanel(GameEngine gameEngine) {
@@ -22,6 +23,19 @@ public class GamePanel extends JPanel {
         this.setDoubleBuffered(true);
         dimension = new Dimension(GameSettings.GAME_WIDTH, GameSettings.GAME_HEIGHT);
         this.setPreferredSize(dimension);
+
+        setLayout(new BoxLayout(this, BoxLayout.Y_AXIS));
+        newGameButton = new JButton("NEW GAME");
+        newGameButton.setFont(new Font("Arial", Font.BOLD, 24));
+        newGameButton.setAlignmentX(Component.CENTER_ALIGNMENT);
+        newGameButton.setVisible(false);
+        add(Box.createVerticalGlue());
+        add(newGameButton);
+        add(Box.createVerticalGlue());
+    }
+
+    public JButton getNewGameButton() {
+        return newGameButton;
     }
 
     private void paintBackground(Graphics2D g2d) {
@@ -157,7 +171,7 @@ public class GamePanel extends JPanel {
         FontMetrics metrics = g2d.getFontMetrics(font);
         String message = "GAME OVER";
         int x = (getWidth() - metrics.stringWidth(message)) / 2;
-        int y = (getHeight() - metrics.getHeight()) / 2 + metrics.getAscent();
+        int y = (getHeight() - metrics.getHeight()) / 2;
         g2d.setColor(Color.BLACK);
         g2d.drawString(message, x + 3, y + 3);
         g2d.setColor(Color.BLACK);
@@ -180,8 +194,10 @@ public class GamePanel extends JPanel {
         if (gameData.getGameState() != GameData.GameState.GAME_OVER) {
             paintBalls(g2d);
             paintCannon(g2d);
+            newGameButton.setVisible(false);
         } else {
             this.paintGameOver(g2d);
+            newGameButton.setVisible(true);
         }
     }
 

@@ -138,6 +138,7 @@ public class GameData {
 
     public void initializeGame(GameConfig gameConfig) {
         clearObjects();
+        balls.clear();
         gameEngine.getGameStateSupervisor().setGameState(GameState.AIMING);
         for (BlockConfig config: gameConfig.blockConfigs) {
             Block block = new Block(config.type, spots[config.y][config.x], config.hp, gameEngine);
@@ -154,5 +155,6 @@ public class GameData {
             balls.add(b);
             cannon.storeBall(b);
         }
+        gameEngine.startTimer();
     }
 }
