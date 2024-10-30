@@ -1,10 +1,8 @@
-package model;
+package GBTAN;
 
-import engine.GameEngine;
-import model.Ball.BallState;
-import model.Block.BlockType;
-import model.Block.BlockConfig;
-import model.Cannon.CannonConfig;
+import GBTAN.Ball.BallState;
+import GBTAN.Block.BlockConfig;
+import GBTAN.Cannon.CannonConfig;
 
 import java.awt.geom.Point2D;
 import java.util.LinkedList;
@@ -16,17 +14,26 @@ public class GameData {
         PLAYING, AIMING, GAME_OVER;
     }
 
+    public static class GameConfig {
+        public CannonConfig cannonConfig;
+        public List<BlockConfig> blockConfigs;
+        public GameConfig(CannonConfig cannonConfig, List<BlockConfig> blockConfigs) {
+            this.cannonConfig = cannonConfig;
+            this.blockConfigs = blockConfigs;
+        }
+    }
+
     private final Player player;
     private final ObjectSpot[][] spots;
     private final List<CollideableObject> objects;
     private final List<Ball> balls;
-    private final GameEngine gameEngine;
+    private final Game game;
     private GameState gameState;
     private Cannon cannon;
 
-    public GameData(GameEngine gameEngine) {
-        this.gameEngine = gameEngine;
-        player = new Player("GBotond", gameEngine);
+    public GameData(Game game) {
+        this.game = game;
+        player = new Player("GBotond", game);
         spots = new ObjectSpot[GameSettings.BLOCK_ROWS][GameSettings.BLOCK_COLUMNS];
         initializeSpots();
         objects = new LinkedList<>();
@@ -105,10 +112,6 @@ public class GameData {
         return ballsReturned;
     }
 
-    public GameEngine getGameEngine() {
-        return gameEngine;
-    }
-
     public GameState getGameState() {
         return gameState;
     }
@@ -117,44 +120,43 @@ public class GameData {
         this.gameState = gameState;
     }
 
-    public static class GameConfig {
-        public CannonConfig cannonConfig;
-        public List<BlockConfig> blockConfigs;
-        public GameConfig(CannonConfig cannonConfig, List<BlockConfig> blockConfigs) {
-            this.cannonConfig = cannonConfig;
-            this.blockConfigs = blockConfigs;
-        }
-    }
-
     public void clearObjects() {
         for (ObjectSpot[] row: spots) {
             for (ObjectSpot spot: row) {
                 if (spot.getObject() != null) {
-                    spot.getObject().destroy();
+                    destroyObject(spot.getObject());
                 }
             }
         }
     }
 
+    public void addBlock(BlockConfig config) {
+        Block block = new Block(config.type, spots[config.y][config.x], config.hp, game);
+        // the block and the spot have mutual references
+        spots[config.y][config.x].setObject(block);
+        this.objects.add(block);
+    }
+
+    public void destroyObject(CollideableObject object) {
+        object.getSpot().clearObject();
+        object.setSpot(null);
+        objects.remove(object);
+    }
+
     public void initializeGame(GameConfig gameConfig) {
         clearObjects();
         balls.clear();
-        gameEngine.getGameStateSupervisor().setGameState(GameState.AIMING);
+        game.setGameState(GameState.AIMING);
         for (BlockConfig config: gameConfig.blockConfigs) {
-            Block block = new Block(config.type, spots[config.y][config.x], config.hp, gameEngine);
-            // the block and the spot have mutual references
-            spots[config.y][config.x].setObject(block);
-            this.objects.add(block);
-
+            addBlock(config);
         }
-        cannon = new Cannon(gameConfig.cannonConfig.x, gameConfig.cannonConfig.angle, gameEngine);
+        cannon = new Cannon(gameConfig.cannonConfig.x, gameConfig.cannonConfig.angle, game);
         for (int i=0; i<gameConfig.cannonConfig.ballNum; i++) {
             Point2D.Double p = new Point2D.Double(0.5*GameSettings.GAME_WIDTH, GameSettings.GAME_HEIGHT);
             Point2D.Double v = new Point2D.Double(0,0);
-            Ball b = new Ball(p, v, GameSettings.BALL_RADIUS, Ball.BallState.IN_STORE, gameEngine);
+            Ball b = new Ball(p, v, GameSettings.BALL_RADIUS, Ball.BallState.IN_STORE, game);
             balls.add(b);
             cannon.storeBall(b);
         }
-        gameEngine.startTimer();
     }
 }

@@ -1,21 +1,18 @@
-package display;
-
-import engine.GameEngine;
-import model.GameSettings;
+package GBTAN;
 
 import javax.swing.*;
 import java.awt.event.ActionEvent;
 
 public class GameFrame extends JFrame {
     private GamePanel gamePanel;
-    private GameEngine gameEngine;
+    private Game game;
     private javax.swing.Timer displayTimer;
 
-    public GameFrame(GameEngine gameEngine) {
+    public GameFrame(Game game) {
         displayTimer = new Timer(1000/GameSettings.FPS, this::display);
         displayTimer.start();
-        this.gameEngine = gameEngine;
-        gamePanel = new GamePanel(gameEngine);
+        this.game = game;
+        gamePanel = new GamePanel(game);
         this.add(gamePanel);
         this.setTitle("GBTAN");
         this.pack();
@@ -32,9 +29,4 @@ public class GameFrame extends JFrame {
     public GamePanel getGamePanel() {
         return gamePanel;
     }
-
-    public GameEngine getGameEngine() {
-        return gameEngine;
-    }
-
 }

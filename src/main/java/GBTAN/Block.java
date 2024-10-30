@@ -1,12 +1,8 @@
-package model;
-
-import engine.CollisionDetection;
-import engine.GameEngine;
+package GBTAN;
 
 import java.awt.*;
 import java.awt.geom.Line2D;
 import java.awt.geom.Point2D;
-import java.util.List;
 
 public class Block extends CollideableObject {
     public enum BlockType {
@@ -16,6 +12,20 @@ public class Block extends CollideableObject {
         TRIANGLE_UPPER_LEFT,
         TRIANGLE_UPPER_RIGHT
     }
+
+    public static class BlockConfig {
+        public BlockType type;
+        public int x;
+        public int y;
+        public int hp;
+        public BlockConfig(int x, int y, int hp, BlockType type) {
+            this.x = x;
+            this.y = y;
+            this.type = type;
+            this.hp = hp;
+        }
+    }
+
     private Point2D.Double[] corners;
     private BlockType type;
     private int health;
@@ -49,8 +59,8 @@ public class Block extends CollideableObject {
         }
     }
 
-    public Block(BlockType type, ObjectSpot spot, int health, GameEngine gameEngine) {
-        super(spot, gameEngine);
+    public Block(BlockType type, ObjectSpot spot, int health, Game game) {
+        super(spot, game);
         this.type = type;
         this.health = health;
         setCornersToSpot();
@@ -73,11 +83,6 @@ public class Block extends CollideableObject {
 
     public Point2D.Double[] getCorners() {
         return corners.clone();
-    }
-
-    @Override
-    public Point2D.Double getCollisionPoint(Ball ball) {
-        return CollisionDetection.ballBlockCollisionPoint(ball, this);
     }
 
     public Point2D.Double getPosition() {
@@ -104,23 +109,10 @@ public class Block extends CollideableObject {
         return new Polygon(xPoints, yPoints, points.length);
     }
 
-    public static class BlockConfig {
-        public BlockType type;
-        public int x;
-        public int y;
-        public int hp;
-        public BlockConfig(int x, int y, int hp, BlockType type) {
-            this.x = x;
-            this.y = y;
-            this.type = type;
-            this.hp = hp;
-        }
-    }
-
     public void decrementHealth() {
         this.health -= 1;
         if (this.health == 0) {
-            destroy();
+            game.getGameData().destroyObject(this);
         }
     }
 

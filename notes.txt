@@ -50,13 +50,20 @@ GOLYÓ MECHANIKA:
     -ha kimennek a játékterületről, kimennek a játékból
 -A tárban lévő labdáknak az ágyú ad kezdő sebességet
 
-EGY KÖR:
--aktív az ágyú
--célzunk, lemegy a fire()
--inaktív lesz az ágyú
--labdák sebességet kapnak
--amíg van labda ami aktív, inaktív marad az ágyú
--...
+Refactor irányelvek:
+-A Data maga csak tárol mint eddig
+-A gameEngine-ből bizonyos logikákat át kell vinni az osztályokba
+    -pl a labda tud mozogni, és pattanni
+-Külön a physicsEngine és gameSupervisor (Game?)
+    -physicsEngine a fizikáért felel, az update-jében
+    -gameSupervisor a játékot kezeli: köröket pörget, blokkokat mozgat
+        -!!! listenereket állítgat
+-A Frame ugyanúgy mint eddig, de benne a Panel egyszerűbben
+    -a panelnek egy dolgot kell tudnia: displayGameData
+        -mégpedig fázistól függően 3 féle lehet
+
+
+
 
 Egy elvetett ötlet az aim helperre:
 //    public Point2D.Double getAimAssistPoint() {

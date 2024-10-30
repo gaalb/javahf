@@ -1,29 +1,25 @@
-package display;
-
-import engine.GameEngine;
-import model.GameSettings;
-import model.*;
+package GBTAN;
 
 import javax.swing.*;
 import java.awt.*;
 import java.awt.geom.AffineTransform;
 import java.awt.geom.Point2D;
 import java.util.List;
+import GBTAN.GameData.GameState;
 
 public class GamePanel extends JPanel {
     private Dimension dimension;
-    private GameEngine gameEngine;
+    private Game game;
     private GameData gameData;
     private JButton newGameButton;
 
-
-    public GamePanel(GameEngine gameEngine) {
-        this.gameEngine = gameEngine;
-        this.gameData = gameEngine.getGameData();
+    public GamePanel(Game game) {
+        this.game = game;
+        this.gameData = game.getGameData();
         this.setDoubleBuffered(true);
         dimension = new Dimension(GameSettings.GAME_WIDTH, GameSettings.GAME_HEIGHT);
         this.setPreferredSize(dimension);
-
+        // Setup layour and newGameButton, which is always present in memory, just not always visualized
         setLayout(new BoxLayout(this, BoxLayout.Y_AXIS));
         newGameButton = new JButton("NEW GAME");
         newGameButton.setFont(new Font("Arial", Font.BOLD, 24));
@@ -59,6 +55,20 @@ public class GamePanel extends JPanel {
         }
     }
 
+    private void paintAimAssist(Graphics2D g2d) {
+        Cannon cannon = gameData.getCannon();
+        double x = cannon.getPosition().getX();
+        double y = cannon.getPosition().getY();
+        g2d.setColor(Color.GREEN);
+        Point2D.Double aimAssistPoint = cannon.project();
+        Stroke dashed = new BasicStroke(3, BasicStroke.CAP_BUTT, BasicStroke.JOIN_BEVEL,
+                0, new float[]{9}, 0);
+        g2d.setStroke(dashed);
+        g2d.drawLine((int)aimAssistPoint.x, (int)aimAssistPoint.y, (int)x, (int)y);
+        int r = (int)GameSettings.BALL_RADIUS;
+        g2d.fillOval((int)aimAssistPoint.x-r, (int)aimAssistPoint.y-r, 2*r, 2*r);
+    }
+
     private void paintCannon(Graphics2D g2d) {
         Cannon cannon = gameData.getCannon();
         int circleRadius = 15;
@@ -68,15 +78,6 @@ public class GamePanel extends JPanel {
         double y = cannon.getPosition().getY();
         double angleDeg = cannon.getAimAngle()-90;
         double angle = Math.toRadians(angleDeg);
-
-        g2d.setColor(Color.GREEN);
-        Point2D.Double aimAssistPoint = cannon.project();
-        Stroke dashed = new BasicStroke(3, BasicStroke.CAP_BUTT, BasicStroke.JOIN_BEVEL,
-                0, new float[]{9}, 0);
-        g2d.setStroke(dashed);
-        g2d.drawLine((int)aimAssistPoint.x, (int)aimAssistPoint.y, (int)x, (int)y);
-        int r = (int)GameSettings.BALL_RADIUS;
-        g2d.fillOval((int)aimAssistPoint.x-r, (int)aimAssistPoint.y-r, 2*r, 2*r);
 
         AffineTransform originalTransform = g2d.getTransform();
         g2d.translate(x, y);
@@ -181,6 +182,20 @@ public class GamePanel extends JPanel {
         g2d.drawString(message, x, y + 1);
         g2d.setColor(Color.RED);
         g2d.drawString(message, x, y);
+        newGameButton.setVisible(true);
+    }
+
+    private void paintPlaying(Graphics2D g2d) {
+        paintBalls(g2d);
+        paintCannon(g2d);
+        newGameButton.setVisible(false);
+    }
+
+    private void paintAiming(Graphics2D g2d) {
+        paintBalls(g2d);
+        paintAimAssist(g2d);
+        paintCannon(g2d);
+        newGameButton.setVisible(false);
     }
 
     @Override
@@ -191,14 +206,18 @@ public class GamePanel extends JPanel {
         paintBackground(g2d);
         paintObjectSpots(g2d);
         paintBlocks(g2d);
-        if (gameData.getGameState() != GameData.GameState.GAME_OVER) {
-            paintBalls(g2d);
-            paintCannon(g2d);
-            newGameButton.setVisible(false);
-        } else {
-            this.paintGameOver(g2d);
-            newGameButton.setVisible(true);
+        switch (gameData.getGameState()) {
+            case GameState.PLAYING:
+                paintPlaying(g2d);
+                break;
+            case GameState.AIMING:
+                paintAiming(g2d);
+                break;
+            case GameState.GAME_OVER:
+                paintGameOver(g2d);
+                break;
+            default:
+                break;
         }
     }
-
 }

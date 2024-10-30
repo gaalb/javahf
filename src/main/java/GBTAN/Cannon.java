@@ -1,22 +1,22 @@
-package model;
+package GBTAN;
 
-import engine.GameEngine;
-import model.Ball.BallState;
+import GBTAN.Ball.BallState;
 
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.geom.Point2D;
 import java.util.LinkedList;
 import java.util.List;
+import javax.swing.*;
 
 public class Cannon {
     private double aimAngle;
     private Point2D.Double position;
-    private GameEngine gameEngine;
+    private Game game;
     private List<Ball> storedBalls;
 
-    public Cannon(int xPosition, double aimAngle, GameEngine gameEngine) {
-        this.gameEngine = gameEngine;
+    public Cannon(int xPosition, double aimAngle, Game game) {
+        this.game = game;
         position = new Point2D.Double(xPosition, GameSettings.GAME_HEIGHT);
         this.aimAngle = aimAngle;
         this.storedBalls = new LinkedList<>();
@@ -57,9 +57,11 @@ public class Cannon {
     private class FireHandler implements ActionListener {
         private int frameCounter;
         private int framesPerShot;
-        public FireHandler(int framesPerShot) {
+        private Timer timer;
+        public FireHandler(int framesPerShot, Timer timer) {
             frameCounter = framesPerShot;
             this.framesPerShot = framesPerShot;
+            this.timer = timer;
         }
 
         @Override
@@ -71,14 +73,14 @@ public class Cannon {
                 }
                 frameCounter++;
             } else {
-                gameEngine.getTimer().removeActionListener(this);
+                timer.removeActionListener(this);
             }
         }
     }
 
     public void fireAll() {
-        FireHandler fireHandler = new FireHandler(GameSettings.FRAMES_BETWEEN_BALLS);
-        gameEngine.getTimer().addActionListener(fireHandler);
+        Timer timer = game.getPhysicsEngine().getPhysicsTimer();
+        FireHandler fireHandler = new FireHandler(GameSettings.FRAMES_BETWEEN_BALLS, timer);
     }
 
     public void storeBall(Ball b) {
@@ -88,17 +90,17 @@ public class Cannon {
     }
 
     public Point2D.Double project() {
-        Cannon cannon = gameEngine.getGameData().getCannon();
+        Cannon cannon = game.getGameData().getCannon();
         double aimAngle = cannon.getAimAngle();
         double vx = GameSettings.BALL_SPEED * Math.cos(Math.toRadians(aimAngle));
         double vy = -GameSettings.BALL_SPEED * Math.sin(Math.toRadians(aimAngle));
-        Ball ball = new Ball(cannon.getPosition(), new Point2D.Double(vx, vy), GameSettings.BALL_RADIUS, BallState.IN_PLAY, gameEngine);
+        Ball ball = new Ball(cannon.getPosition(), new Point2D.Double(vx, vy), GameSettings.BALL_RADIUS, BallState.IN_PLAY, game);
         while (true) {
             ball.move();
             if (ball.getPosition().x < ball.getRadius()) break;
             if (ball.getPosition().x > GameSettings.GAME_WIDTH - ball.getRadius()) break;
             if (ball.getPosition().y < ball.getRadius()) break;
-            if (gameEngine.firstCollisionPoint(ball) != null) break;
+            if (game.getPhysicsEngine().firstCollisionPoint(ball) != null) break;
         }
         return ball.getPosition();
     }

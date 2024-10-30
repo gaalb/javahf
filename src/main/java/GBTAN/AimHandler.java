@@ -1,7 +1,4 @@
-package engine;
-
-import model.*;
-import model.GameData.GameState;
+package GBTAN;
 
 import java.awt.*;
 import java.awt.event.MouseAdapter;
@@ -9,22 +6,22 @@ import java.awt.event.MouseEvent;
 import java.awt.geom.Point2D;
 
 public class AimHandler extends MouseAdapter {
-    private GameEngine gameEngine;
+    private Game game;
     private boolean isAiming;
-    public AimHandler(GameEngine gameEngine) {
+    public AimHandler(Game game) {
         this.isAiming = false;
-        this.gameEngine = gameEngine;
+        this.game = game;
     }
 
     public void updateAimingAngle(Point p) {
-        Cannon cannon = gameEngine.getGameData().getCannon();
+        Cannon cannon = game.getGameData().getCannon();
         Point2D.Double cannonPosition = cannon.getPosition();
         double dx = p.getX() - cannonPosition.getX();
         double dy = cannonPosition.getY() - p.getY();
         double angleRad = Math.atan2(dy, dx);
         double angleDeg = Math.toDegrees(angleRad);
         cannon.setAimAngle(Math.max(30, Math.min(150, angleDeg)));
-        gameEngine.getGameFrame().getGamePanel().repaint();
+        game.getGameFrame().getGamePanel().repaint();
     }
 
     @Override
@@ -37,7 +34,7 @@ public class AimHandler extends MouseAdapter {
     public void mouseReleased(MouseEvent event) {
         if (isAiming) {
             isAiming = false;
-            gameEngine.getGameData().getCannon().fireAll();
+            game.getGameData().getCannon().fireAll();
         }
     }
 

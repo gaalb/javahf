@@ -1,4 +1,4 @@
-package model;
+package GBTAN;
 
 import java.awt.geom.Point2D;
 

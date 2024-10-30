@@ -1,14 +1,12 @@
-package model;
-
-import engine.GameEngine;
+package GBTAN;
 
 public class Player {
-    private GameEngine gameEngine;
+    private Game game;
     private String name;
     private int score;
 
-    public Player(String name, GameEngine gameEngine) {
-        this.gameEngine = gameEngine;
+    public Player(String name, Game game) {
+        this.game = game;
         this.name = name;
         score = 0;
     }
