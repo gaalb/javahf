@@ -5,6 +5,8 @@ import java.awt.*;
 import java.awt.geom.AffineTransform;
 import java.awt.geom.Point2D;
 import java.util.List;
+import java.util.Random;
+
 import GBTAN.GameData.GameState;
 
 public class GamePanel extends JPanel {
@@ -103,6 +105,14 @@ public class GamePanel extends JPanel {
         g2d.setColor(Color.BLACK);
         g2d.setStroke(new BasicStroke(2));
         g2d.drawOval((int)x-circleRadius, (int)y-circleRadius, circleRadius*2, circleRadius*2);
+
+        // Display number of balls
+        g2d.setFont(new Font("SansSerif", Font.BOLD, 20));
+        String ballText = "x" + cannon.storedNumber();
+        g2d.setColor(Color.BLACK);
+        g2d.drawString(ballText, (int)x+circleRadius+2, dimension.height);
+        g2d.setColor(Color.PINK);
+        g2d.drawString(ballText, (int)x+circleRadius, dimension.height-2);
     }
 
     private void paintBalls(Graphics2D g2d) {
@@ -117,6 +127,32 @@ public class GamePanel extends JPanel {
             g2d.setColor(Color.BLACK);
             g2d.setStroke(new BasicStroke(2));
             g2d.drawOval(x, y, w, h);
+        }
+    }
+
+    private void paintBoons(Graphics2D g2d) {
+        List<Boon> boons = gameData.getBoons();
+        for (Boon boon: boons) {
+            int r = (int)boon.getRadius();
+            int x = (int)boon.getPosition().x;
+            int y = (int)boon.getPosition().y;
+            if (boon instanceof PlusOne && !boon.isSpent()) {
+                g2d.setColor(Color.CYAN);
+                g2d.setStroke(new BasicStroke(4));
+                g2d.drawOval(x-r, y-r, 2*r, 2*r);
+                g2d.drawLine(x, y-r, x, y+r);
+                g2d.drawLine(x-r, y, x+r, y);
+            } else if (boon instanceof Randomizer) {
+                g2d.setColor(Color.MAGENTA);
+                g2d.setStroke(new BasicStroke(4));
+                g2d.drawOval(x-r, y-r, 2*r, 2*r);
+                AffineTransform originalTransform = g2d.getTransform();
+                g2d.translate(x, y);
+                g2d.rotate(Math.PI/4);
+                g2d.drawLine(0, -r, 0, r);
+                g2d.drawLine(-r, 0, r, 0);
+                g2d.setTransform(originalTransform);
+            }
         }
     }
 
@@ -197,6 +233,7 @@ public class GamePanel extends JPanel {
         paintBackground(g2d);
         paintObjectSpots(g2d);
         paintBlocks(g2d);
+        paintBoons(g2d);
         switch (gameData.getGameState()) {
             case GameState.PLAYING:
                 paintPlaying(g2d);

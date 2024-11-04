@@ -63,43 +63,7 @@ Refactor irányelvek:
         -mégpedig fázistól függően 3 féle lehet
 
 
-
-
-Egy elvetett ötlet az aim helperre:
-//    public Point2D.Double getAimAssistPoint() {
-//        // we'll have two lines: one for the right side of the ball stream, one for the left
-//        Cannon cannon = gameEngine.getGameData().getCannon();
-//        double angle = cannon.getAimAngle();
-//        Point2D.Double leftSide = cannon.getPosition();
-//        leftSide.x -= GameSettings.BALL_RADIUS * Math.sin(Math.toRadians(angle));
-//        leftSide.y += GameSettings.BALL_RADIUS * Math.cos(Math.toRadians(angle));
-//        Point2D.Double rightSide = cannon.getPosition();
-//        rightSide.x += GameSettings.BALL_RADIUS * Math.sin(Math.toRadians(angle));
-//        rightSide.y -= GameSettings.BALL_RADIUS * Math.cos(Math.toRadians(angle));
-//        List<Block> blocks = gameEngine.getGameData().getBlocks();
-//        double intersectionDistance = GameSettings.GAME_DIAMETER;
-//        Block intersectingBlock = null;
-//        Point2D.Double intersectingPoint = null;
-//        for (Block block: blocks) {
-//            Line2D.Double[] edges = block.getSides();
-//            for (Line2D.Double edge: edges) {
-//                Point2D.Double leftIntersectingPoint = CollisionDetection.lineAndSegment(angle, leftSide, edge);
-//                if (leftIntersectingPoint != null && leftIntersectingPoint.distance(leftSide) < intersectionDistance) {
-//                    intersectionDistance = leftIntersectingPoint.distance(leftSide);
-//                    intersectingBlock = block;
-//                    double x = leftIntersectingPoint.x - leftSide.x + cannon.getPosition().x;
-//                    double y = leftIntersectingPoint.y - leftSide.y + cannon.getPosition().y;
-//                    intersectingPoint = new Point2D.Double(x, y);
-//                }
-//                Point2D.Double rightIntersectingPoint = CollisionDetection.lineAndSegment(angle, rightSide, edge);
-//                if (rightIntersectingPoint != null && rightIntersectingPoint.distance(rightSide) < intersectionDistance) {
-//                    intersectionDistance = rightIntersectingPoint.distance(rightSide);
-//                    intersectingBlock = block;
-//                    double x = rightIntersectingPoint.x - rightSide.x + cannon.getPosition().x;
-//                    double y = rightIntersectingPoint.y - rightSide.y + cannon.getPosition().y;
-//                    intersectingPoint = new Point2D.Double(x, y);
-//                }
-//            }
-//        }
-//        return intersectingPoint;
-//    }
+Mit kell betölteni, mikor egy játékot betöltünk?
+-sorok configját
+-játékos adatait
+-ágyú állását

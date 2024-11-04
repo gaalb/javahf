@@ -18,6 +18,12 @@ public class Game {
         physicsEngine = new PhysicsEngine(this);
         physicsEngine.getPhysicsTimer().addActionListener(this::checkGameState);
         aimHandler = new AimHandler(this);
+
+        gameFrame.getEndRoundButton().addActionListener(e -> {
+            for (Ball ball: gameData.getBallsInPlay()) {
+                gameData.getCannon().returnBall(ball);
+            }
+        });
     }
 
     public GameData getGameData() {
@@ -42,12 +48,14 @@ public class Game {
         // the aim handler (which turns the cannon) must be disabled
         gameFrame.getGamePanel().removeMouseListener(aimHandler);
         gameFrame.getGamePanel().removeMouseMotionListener(aimHandler);
+        gameFrame.getEndRoundButton().setEnabled(true);
     }
 
     private void setGameOver() {
         // When the game is over, the player cannot aim -> disable aim handler
         gameFrame.getGamePanel().removeMouseListener(aimHandler);
         gameFrame.getGamePanel().removeMouseMotionListener(aimHandler);
+        gameFrame.getEndRoundButton().setEnabled(false);
         physicsEngine.stopPhysics();  // the game is over, so physics (bounces, movement) must be disabled
         // We start paying attention to the "New Game" button: pressing it initializes a new game
         JButton newGameButton = gameFrame.getGamePanel().getNewGameButton();
@@ -60,6 +68,7 @@ public class Game {
         // When the game is in its aiming stage, the aim handler must listen for mouse inputs
         gameFrame.getGamePanel().addMouseListener(aimHandler);
         gameFrame.getGamePanel().addMouseMotionListener(aimHandler);
+        gameFrame.getEndRoundButton().setEnabled(false);
         // Physics are started, so that when the first ball emerges from the cannon, its position is updated
         physicsEngine.startPhysics();
         Cannon cannon = gameData.getCannon();
@@ -84,7 +93,7 @@ public class Game {
         }
     }
 
-    private void shiftBlocksDown() {
+    private void shiftObjects() {
         // Moves all blocks present one row down, except the last row (since they have nowhere to go).
         ObjectSpot[][] spots = gameData.getSpots();
         // Starting at the last row, and moving up (the other way around wouldn't work because
@@ -93,9 +102,15 @@ public class Game {
             ObjectSpot[] upperRow = spots[i-1];
             ObjectSpot[] lowerRow = spots[i];
             for (int j=0; j<lowerRow.length; j++) {
-                if (upperRow[j].getObject() != null) {
-                    lowerRow[j].setObject(upperRow[j].getObject());
-                    upperRow[j].clearObject();
+                CollideableObject o = upperRow[j].getObject();
+                if (o != null) {
+                    if (o instanceof Boon && ((Boon)o).isSpent()) {
+                        // spent boons get deleted instead of shifted
+                        gameData.destroyObject(o);
+                    } else {
+                        lowerRow[j].setObject(upperRow[j].getObject());
+                        upperRow[j].clearObject();
+                    }
                 }
             }
         }
@@ -109,7 +124,7 @@ public class Game {
                 // aiming if all the balls go out of play
                 if (gameData.getBallsInPlay().isEmpty()) {
                     setGameState(GameState.AIMING);
-                    shiftBlocksDown();
+                    shiftObjects();
                 }
                 break;
             case GameState.AIMING:
@@ -117,7 +132,7 @@ public class Game {
                 // game is over (blocks are touching the bottom of the screen).
                 ObjectSpot[] lastRow = gameData.getSpots()[GameSettings.BLOCK_ROWS-1];
                 for (ObjectSpot spot: lastRow) {
-                    if (spot.getObject() != null) {
+                    if (spot.getObject() != null && (spot.getObject() instanceof Block)) {
                         setGameState(GameState.GAME_OVER);
                         return;
                     }

@@ -29,6 +29,10 @@ public class Ball {
         return new Point2D.Double(velocity.x, velocity.y);
     }
 
+    public double getAbsVelocity() {
+        return Math.sqrt(Math.pow(velocity.x, 2) + Math.pow(velocity.y, 2));
+    }
+
     public double getRadius() {
         return radius;
     }

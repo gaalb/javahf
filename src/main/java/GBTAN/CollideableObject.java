@@ -19,4 +19,8 @@ public abstract class CollideableObject {
     public void setSpot(ObjectSpot spot) {
         this.spot = spot;
     }
+
+    public Point2D.Double getPosition() {
+        return spot.getCenter();
+    }
 }

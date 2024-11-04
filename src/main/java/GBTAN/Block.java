@@ -90,10 +90,6 @@ public class Block extends CollideableObject {
         return corners.clone();
     }
 
-    public Point2D.Double getPosition() {
-        return spot.getCenter();
-    }
-
     public Line2D.Double[] getSides() {
         int numCorners = corners.length;
         Line2D.Double[] sides = new Line2D.Double[numCorners];

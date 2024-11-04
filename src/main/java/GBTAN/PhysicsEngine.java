@@ -121,13 +121,6 @@ public class PhysicsEngine {
         }
     }
 
-    private void returnBallToCannon(Ball ball) {
-        if (gameData.getBallsReturned().isEmpty()) {
-            gameData.getCannon().setPosition(ball.getPosition().x);
-        }
-        ball.setState(Ball.BallState.RETURNED);
-    }
-
     public AbstractMap.SimpleEntry<Block, Point2D.Double> firstCollisionPoint(Ball ball) {
         // This method checks for collisions among all the blocks within minimum collision distance,
         // and returns immediately upon finding a colliding block. Its return is the block
@@ -150,8 +143,13 @@ public class PhysicsEngine {
         // at the start of a new round, we don't need to check for collisions, only after moving.
         ball.move();  // since we moved, we may now have a collision on our hands, or we may have left the panel
         if (ball.getPosition().y > GameSettings.GAME_HEIGHT + ball.getRadius()) {  // Ball exited the play area
-            returnBallToCannon(ball);
+            gameData.getCannon().returnBall(ball);
             return;
+        }
+        for (Boon boon: gameData.getBoons()) {
+            if (ball.getPosition().distance(boon.getPosition()) <= boon.getRadius() + ball.getRadius() + GameSettings.EPS) {
+                boon.bless(ball);
+            }
         }
         ball.bounceOffWalls();
         AbstractMap.SimpleEntry<Block, Point2D.Double> blockAndPoint = firstCollisionPoint(ball);

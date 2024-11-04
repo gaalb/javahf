@@ -88,11 +88,19 @@ public class Cannon {
         timer.addActionListener(fireHandler);
     }
 
-    public void storeBall(Ball b) {
+    public void storeBall(Ball ball) {
         // Returned balls can be stored by calling this method.
-        storedBalls.add(b);
-        b.setState(BallState.IN_STORE);
-        b.setPosition(position);
+        storedBalls.add(ball);
+        ball.setState(BallState.IN_STORE);
+        ball.setPosition(position);
+    }
+
+    public void returnBall(Ball ball) {
+        // Return a ball in play to the cannon
+        if (game.getGameData().getBallsReturned().isEmpty()) {
+            setPosition(ball.getPosition().x);
+        }
+        ball.setState(BallState.RETURNED);
     }
 
     public Point2D.Double project() {
