@@ -30,6 +30,12 @@ public class Game {
                 gameData.getCannon().returnBall(ball);
             }
         });
+
+        gameFrame.getSpeedUpButton().addActionListener(e -> {
+            physicsEngine.doubleSpeed();
+            gameFrame.getSpeedUpButton().setEnabled(false);
+        });
+
     }
 
     public GameData getGameData() {
@@ -56,6 +62,8 @@ public class Game {
         gameFrame.getGamePanel().removeMouseListener(aimHandler);
         gameFrame.getGamePanel().removeMouseMotionListener(aimHandler);
         gameFrame.getEndRoundButton().setEnabled(true);
+        gameFrame.getSpeedUpButton().setEnabled(true);
+        physicsEngine.resetSpeed();
     }
 
     private void setGameOver() {
@@ -63,6 +71,8 @@ public class Game {
         gameFrame.getGamePanel().removeMouseListener(aimHandler);
         gameFrame.getGamePanel().removeMouseMotionListener(aimHandler);
         gameFrame.getEndRoundButton().setEnabled(false);
+        gameFrame.getSpeedUpButton().setEnabled(false);
+        physicsEngine.resetSpeed();
         physicsEngine.stopPhysics();  // the game is over, so physics (bounces, movement) must be disabled
         // We start paying attention to the "New Game" button: pressing it initializes a new game
         JButton newGameButton = gameFrame.getGamePanel().getNewGameButton();
@@ -76,6 +86,8 @@ public class Game {
         gameFrame.getGamePanel().addMouseListener(aimHandler);
         gameFrame.getGamePanel().addMouseMotionListener(aimHandler);
         gameFrame.getEndRoundButton().setEnabled(false);
+        gameFrame.getSpeedUpButton().setEnabled(false);
+        physicsEngine.resetSpeed();
         // Physics are started, so that when the first ball emerges from the cannon, its position is updated
         physicsEngine.startPhysics();
         Cannon cannon = gameData.getCannon();

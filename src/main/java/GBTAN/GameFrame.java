@@ -9,6 +9,7 @@ public class GameFrame extends JFrame {
     private final Game game;
     private final javax.swing.Timer displayTimer;
     private final JButton endRoundButton;
+    private final JButton speedUpButton;
     private final JPanel bottomPanel;
     private final TopPanel topPanel;
 
@@ -26,7 +27,10 @@ public class GameFrame extends JFrame {
         this.add(topPanel, BorderLayout.NORTH);
 
         bottomPanel = new JPanel();
+        bottomPanel.setLayout(new FlowLayout(FlowLayout.CENTER, GameSettings.BLOCK_WIDTH, GameSettings.BLOCK_WIDTH/10 ));
         endRoundButton = new JButton("End Round");
+        speedUpButton = new JButton("2x Speed");
+        bottomPanel.add(speedUpButton);
         bottomPanel.add(endRoundButton);
         bottomPanel.setBackground(Color.lightGray);
         this.add(bottomPanel, BorderLayout.SOUTH);
@@ -49,5 +53,9 @@ public class GameFrame extends JFrame {
 
     public JButton getEndRoundButton() {
         return endRoundButton;
+    }
+
+    public JButton getSpeedUpButton() {
+        return speedUpButton;
     }
 }

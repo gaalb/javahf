@@ -22,6 +22,14 @@ public class PhysicsEngine {
         physicsTimer.start();
     }
 
+    public void doubleSpeed() {
+        physicsStepsPerTick *= 2;
+    }
+
+    public void resetSpeed() {
+        physicsStepsPerTick = GameSettings.PHYSICS_FREQ * physicsTimer.getDelay()/1000;
+    }
+
     public Timer getPhysicsTimer() {
         return physicsTimer;
     }
