@@ -2,6 +2,7 @@ package GBTAN;
 
 import javax.swing.*;
 import java.awt.event.ActionEvent;
+import java.awt.geom.Point2D;
 import java.io.File;
 import java.util.*;
 
@@ -99,6 +100,22 @@ public class Game {
         }
     }
 
+    private void cleanUpSpentBoons() {
+        for (ObjectSpot[] row: gameData.getSpots()) {
+            for (ObjectSpot spot: row) {
+                CollideableObject o = spot.getObject();
+                if (o instanceof Boon && ((Boon)o).isSpent()) {
+                    if (o instanceof PlusOne) {
+                        Ball newBall = new Ball(new Point2D.Double(0,0), new Point2D.Double(0,0),
+                                GameSettings.BALL_RADIUS, Ball.BallState.RETURNED, this);
+                        gameData.getBalls().add(newBall);
+                    }
+                    gameData.destroyObject(o);
+                }
+            }
+        }
+    }
+
     private void shiftObjects() {
         // Moves all blocks present one row down, except the last row (since they have nowhere to go).
         ObjectSpot[][] spots = gameData.getSpots();
@@ -110,13 +127,8 @@ public class Game {
             for (int j=0; j<lowerRow.length; j++) {
                 CollideableObject o = upperRow[j].getObject();
                 if (o != null) {
-                    if (o instanceof Boon && ((Boon)o).isSpent()) {
-                        // spent boons get deleted instead of shifted
-                        gameData.destroyObject(o);
-                    } else {
-                        lowerRow[j].setObject(upperRow[j].getObject());
-                        upperRow[j].clearObject();
-                    }
+                    lowerRow[j].setObject(upperRow[j].getObject());
+                    upperRow[j].clearObject();
                 }
             }
         }
@@ -166,10 +178,11 @@ public class Game {
                 // When the round is playing (balls are moving, aiming is off), we must switch back to
                 // aiming if all the balls go out of play
                 if (gameData.getBallsInPlay().isEmpty()) {
-                    setGameState(GameState.AIMING);
+                    cleanUpSpentBoons();
                     shiftObjects();
                     spawnRow();
                     gameData.setScore(gameData.getScore()+1);
+                    setGameState(GameState.AIMING);
                 }
                 break;
             case GameState.AIMING:

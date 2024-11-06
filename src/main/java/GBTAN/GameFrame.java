@@ -10,6 +10,7 @@ public class GameFrame extends JFrame {
     private final javax.swing.Timer displayTimer;
     private final JButton endRoundButton;
     private final JPanel bottomPanel;
+    private final TopPanel topPanel;
 
     public GameFrame(Game game) {
         // Timer that ticks with the desired FPS value, regardless of the physics rate.
@@ -19,11 +20,15 @@ public class GameFrame extends JFrame {
 
         setLayout(new BorderLayout());
         gamePanel = new GamePanel(game);
-        this.add(gamePanel, BorderLayout.NORTH);
+        this.add(gamePanel, BorderLayout.CENTER);
+
+        topPanel = new TopPanel(game);
+        this.add(topPanel, BorderLayout.NORTH);
 
         bottomPanel = new JPanel();
         endRoundButton = new JButton("End Round");
         bottomPanel.add(endRoundButton);
+        bottomPanel.setBackground(Color.lightGray);
         this.add(bottomPanel, BorderLayout.SOUTH);
 
         this.setTitle("GBTAN");
