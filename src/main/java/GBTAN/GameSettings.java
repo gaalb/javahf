@@ -1,12 +1,5 @@
 package GBTAN;
 
-import GBTAN.Block.BlockConfig;
-import GBTAN.Cannon.CannonConfig;
-import GBTAN.GameData.GameConfig;
-import GBTAN.Block.BlockType;
-import GBTAN.Boon.BoonType;
-import GBTAN.Boon.BoonConfig;
-
 import java.util.ArrayList;
 import java.util.List;
 
@@ -29,21 +22,4 @@ public class GameSettings {
     public static final double EPS = 0.1;
     public static final double MIN_AIM_ANGLE = 20;
     public static final double BOON_RADIUS = 13;
-
-    public static GameConfig DEFAULT_CONFIG() {
-        List<BlockConfig> blocks = new ArrayList<>();
-        blocks.add(new BlockConfig(0, 0, 10, BlockType.TRIANGLE_UPPER_LEFT));
-        blocks.add(new BlockConfig(1, 0, 9, BlockType.TRIANGLE_UPPER_RIGHT));
-        blocks.add(new BlockConfig(4, 5, 8, BlockType.SQUARE));
-        blocks.add(new BlockConfig(4, 4, 7, BlockType.TRIANGLE_LOWER_RIGHT));
-        blocks.add(new BlockConfig(0, 5, 6, BlockType.SQUARE));
-        blocks.add(new BlockConfig(6, 1, 5, BlockType.TRIANGLE_LOWER_LEFT));
-        blocks.add(new BlockConfig(3, 2, 4, BlockType.SQUARE));
-        blocks.add(new BlockConfig(2, 7, 1,BlockType.SQUARE));
-        List<BoonConfig> boons = new ArrayList<>();
-        boons.add(new BoonConfig(3, 3, BoonType.RANDOMIZER));
-        boons.add(new BoonConfig(3, 7, BoonType.PLUS_ONE));
-        CannonConfig cannonConfig = new CannonConfig(200, 90, GameSettings.STARTING_BALL_NUM);
-        return new GameConfig(cannonConfig, blocks, boons);
-    }
 }

@@ -1,10 +1,7 @@
 package GBTAN;
 
 import GBTAN.Ball.BallState;
-import GBTAN.Block.BlockConfig;
-import GBTAN.Cannon.CannonConfig;
-import GBTAN.Boon.BoonType;
-import GBTAN.Boon.BoonConfig;
+import GBTAN.GameConfig.SpotConfig;
 
 import java.awt.geom.Point2D;
 import java.util.LinkedList;
@@ -15,18 +12,6 @@ public class GameData {
     public enum GameState {
         PLAYING, AIMING, GAME_OVER;
     }
-
-    public static class GameConfig {
-        public CannonConfig cannonConfig;
-        public List<BlockConfig> blockConfigs;
-        public List<BoonConfig> boonConfigs;
-        public GameConfig(CannonConfig cannonConfig, List<BlockConfig> blockConfigs, List<BoonConfig> boonConfigs) {
-            this.cannonConfig = cannonConfig;
-            this.blockConfigs = blockConfigs;
-            this.boonConfigs = boonConfigs;
-        }
-    }
-
     private Player player;
     private final ObjectSpot[][] spots;  // ObjectSpots are static for the whole game duration, hence array not list
     private final List<CollideableObject> objects;
@@ -34,10 +19,24 @@ public class GameData {
     private final Game game;
     private GameState gameState;
     private Cannon cannon;
+    private int score;
 
-    public GameData(Game game) {
+    public Player getPlayer() {
+        return player;
+    }
+
+    public int getScore() {
+        return score;
+    }
+
+    public void setScore(int score) {
+        this.score = score;
+    }
+
+    public GameData(Player player, Game game) {
         this.game = game;
-        player = new Player("GBotond", game);
+        this.player = player;
+        this.score = 1;
         spots = new ObjectSpot[GameSettings.BLOCK_ROWS][GameSettings.BLOCK_COLUMNS];
         initializeSpots();
         objects = new LinkedList<>();  // contains all CollideableObjects: Blocks or Boons
@@ -135,31 +134,10 @@ public class GameData {
         }
     }
 
-    public void addObject(CollideableObject o, int x, int y) {
-        // the block and the spot have mutual references. The reference to the spot is
-        // stored in the CollideableObject constructor, but the reference to the
-        // CollideableObject must then be set in the spot:
-        spots[y][x].setObject(o);
+    public void assignObjectToSpot(CollideableObject o, ObjectSpot spot) {
+        if (spot.getObject() != null) destroyObject(spot.getObject());
+        spot.setObject(o);
         this.objects.add(o);
-    }
-
-    public void addBlock(BlockConfig config) {
-        Block block = new Block(config.type, spots[config.y][config.x], config.hp, game);
-        addObject(block, config.x, config.y);
-    }
-
-    public void addBoon(BoonConfig config) {
-        Boon boon;
-        switch (config.type) {
-            case PLUS_ONE:
-                boon = new PlusOne(GameSettings.BOON_RADIUS ,spots[config.y][config.x], game);
-                addObject(boon, config.x, config.y);
-                break;
-            case RANDOMIZER:
-                boon = new Randomizer(GameSettings.BOON_RADIUS ,spots[config.y][config.x], game);
-                addObject(boon, config.x, config.y);
-                break;
-        }
     }
 
     public void destroyObject(CollideableObject object) {
@@ -169,21 +147,37 @@ public class GameData {
     }
 
     public void initialize(GameConfig gameConfig) {
+        score = gameConfig.score;
         clearObjects();
         balls.clear();
-        for (BlockConfig config: gameConfig.blockConfigs) {
-            addBlock(config);
+        for (int y=0; y<gameConfig.spots.length; y++) {
+            for (int x=0; x<gameConfig.spots[y].length; x++) {
+                SpotConfig config = gameConfig.spots[y][x];
+                ObjectSpot spot = spots[y][x];
+                CollideableObject obj;
+                switch (config.objectType) {
+                    case NULL:
+                        spot.setObject(null);
+                        break;
+                    case PLUS_ONE:
+                        obj = new PlusOne(GameSettings.BALL_RADIUS, game);
+                        assignObjectToSpot(obj, spot);
+                        break;
+                    case RANDOMIZER:
+                        obj = new Randomizer(GameSettings.BALL_RADIUS, game);
+                        assignObjectToSpot(obj, spot);
+                    default:
+                        obj = new Block(config.objectType, config.hp, game);
+                        assignObjectToSpot(obj, spot);
+                        break;
+                }
+            }
         }
-        for (BoonConfig config: gameConfig.boonConfigs) {
-            addBoon(config);
-        }
-        cannon = new Cannon(gameConfig.cannonConfig.x, gameConfig.cannonConfig.angle, game);
-        for (int i=0; i<gameConfig.cannonConfig.ballNum; i++) {
-            Point2D.Double p = new Point2D.Double(0.5*GameSettings.GAME_WIDTH, GameSettings.GAME_HEIGHT);
-            Point2D.Double v = new Point2D.Double(0,0);
-            Ball b = new Ball(p, v, GameSettings.BALL_RADIUS, Ball.BallState.IN_STORE, game);
-            balls.add(b);
-            cannon.storeBall(b);
+        cannon = new Cannon(gameConfig.cannonPos, 90, game);
+        for (int i=0; i<gameConfig.ballNum; i++) {
+            Ball ball = new Ball(cannon.getPosition(), new Point2D.Double(0, 0), GameSettings.BALL_RADIUS, BallState.IN_STORE, game);
+            balls.add(ball);
+            cannon.storeBall(ball);
         }
     }
 }

@@ -1,13 +1,16 @@
 import GBTAN.Game;
 import GBTAN.GameSettings;
+import GBTAN.GameConfig;
 
 import javax.swing.*;
+import java.io.File;
 
 public class Main {
     public static void main(String[] args) {
         SwingUtilities.invokeLater(()-> {
             Game game = new Game();
-            game.initializeGame(GameSettings.DEFAULT_CONFIG());
+            GameConfig c = new GameConfig(new File("defaultConfig.json"));
+            game.initializeGame(c);
         });
     }
 }

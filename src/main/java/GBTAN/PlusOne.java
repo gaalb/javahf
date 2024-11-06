@@ -4,8 +4,8 @@ import java.awt.geom.Point2D;
 import GBTAN.Ball.BallState;
 
 public class PlusOne extends Boon{
-    public PlusOne(double radius, ObjectSpot spot, Game game) {
-        super(radius, spot, game);
+    public PlusOne(double radius, Game game) {
+        super(radius, game);
     }
 
     @Override

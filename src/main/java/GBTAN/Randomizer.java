@@ -5,8 +5,8 @@ import java.util.Random;
 
 public class Randomizer extends Boon{
     private Random random;
-    public Randomizer(double radius, ObjectSpot spot, Game game) {
-        super(radius, spot, game);
+    public Randomizer(double radius, Game game) {
+        super(radius, game);
         random = new Random();
     }
 

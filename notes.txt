@@ -63,7 +63,25 @@ Refactor irányelvek:
         -mégpedig fázistól függően 3 féle lehet
 
 
-Mit kell betölteni, mikor egy játékot betöltünk?
--sorok configját
--játékos adatait
--ágyú állását
+A játékoshoz tartozik, azaz PlayerConfig-ba megy
+-high score
+-név
+-sor spawn szabályok
+    -blokk súlyfüggvény
+    -blokkszám súlyfüggvény
+    -szóró esélye
+    -2x esély
+
+A játékálláshoz tartozik, azaz GameConfig-ba megy:
+-golyók száma
+-ágyú pozíció
+-score
+-sorok configja
+    -ezek spotok configjai
+        -milyen objektum van benne
+        -ha blokk, akkor típusa és hpja
+
+Ezek alapján 3 funkció:
+-játékos betöltés
+-állás betöltés
+-sorgenerálás

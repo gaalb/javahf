@@ -15,7 +15,7 @@ public class Cannon {
     private final Game game;
     private List<Ball> storedBalls;
 
-    public Cannon(int xPosition, double aimAngle, Game game) {
+    public Cannon(double xPosition, double aimAngle, Game game) {
         this.game = game;
         position = new Point2D.Double(xPosition, GameSettings.GAME_HEIGHT);
         this.aimAngle = aimAngle;
@@ -120,16 +120,5 @@ public class Cannon {
             if (game.getPhysicsEngine().firstCollisionPoint(ball) != null) break;
         }
         return ball.getPosition();
-    }
-
-    public static class CannonConfig {
-        public int x;
-        public double angle;
-        public int ballNum;
-        public CannonConfig(int x, double angle, int ballNum) {
-            this.x = x;
-            this.angle = angle;
-            this.ballNum = ballNum;
-        }
     }
 }

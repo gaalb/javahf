@@ -5,29 +5,8 @@ import java.awt.geom.Line2D;
 import java.awt.geom.Point2D;
 
 public class Block extends CollideableObject {
-    public enum BlockType {
-        SQUARE,
-        TRIANGLE_LOWER_LEFT,
-        TRIANGLE_LOWER_RIGHT,
-        TRIANGLE_UPPER_LEFT,
-        TRIANGLE_UPPER_RIGHT
-    }
-
-    public static class BlockConfig {
-        public BlockType type;
-        public int x;
-        public int y;
-        public int hp;
-        public BlockConfig(int x, int y, int hp, BlockType type) {
-            this.x = x;
-            this.y = y;
-            this.type = type;
-            this.hp = hp;
-        }
-    }
-
     private Point2D.Double[] corners;
-    private BlockType type;
+    private ObjectType type;
     private int health;
 
     private void setCornersToSpot() {
@@ -62,18 +41,17 @@ public class Block extends CollideableObject {
         }
     }
 
-    public Block(BlockType type, ObjectSpot spot, int health, Game game) {
-        super(spot, game);
+    public Block(ObjectType type, int health, Game game) {
+        super(game);
         this.type = type;
         this.health = health;
-        setCornersToSpot();
     }
 
-    public BlockType getType() {
+    public ObjectType getType() {
         return type;
     }
 
-    public void setType(BlockType type) {
+    public void setType(ObjectType type) {
         this.type = type;
         setCornersToSpot();
     }

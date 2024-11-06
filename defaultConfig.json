@@ -1,0 +1,16 @@
+{
+  "ballNum": 1,
+  "cannonPos": 210,
+  "score": 1,
+  "spots": [
+    [{"objectType": "NULL", "hp": 0}, {"objectType": "NULL", "hp": 0}, {"objectType": "NULL", "hp": 0}, {"objectType": "NULL", "hp": 0}, {"objectType": "NULL", "hp": 0}, {"objectType": "NULL", "hp": 0}, {"objectType": "NULL", "hp": 0}],
+    [{"objectType": "NULL", "hp": 0}, {"objectType": "NULL", "hp": 0}, {"objectType": "NULL", "hp": 0}, {"objectType": "NULL", "hp": 0}, {"objectType": "NULL", "hp": 0}, {"objectType": "NULL", "hp": 0}, {"objectType": "NULL", "hp": 0}],
+    [{"objectType": "NULL", "hp": 0}, {"objectType": "NULL", "hp": 0}, {"objectType": "NULL", "hp": 0}, {"objectType": "NULL", "hp": 0}, {"objectType": "NULL", "hp": 0}, {"objectType": "NULL", "hp": 0}, {"objectType": "NULL", "hp": 0}],
+    [{"objectType": "NULL", "hp": 0}, {"objectType": "NULL", "hp": 0}, {"objectType": "NULL", "hp": 0}, {"objectType": "NULL", "hp": 0}, {"objectType": "NULL", "hp": 0}, {"objectType": "NULL", "hp": 0}, {"objectType": "NULL", "hp": 0}],
+    [{"objectType": "NULL", "hp": 0}, {"objectType": "NULL", "hp": 0}, {"objectType": "NULL", "hp": 0}, {"objectType": "NULL", "hp": 0}, {"objectType": "NULL", "hp": 0}, {"objectType": "NULL", "hp": 0}, {"objectType": "NULL", "hp": 0}],
+    [{"objectType": "NULL", "hp": 0}, {"objectType": "NULL", "hp": 0}, {"objectType": "NULL", "hp": 0}, {"objectType": "NULL", "hp": 0}, {"objectType": "NULL", "hp": 0}, {"objectType": "NULL", "hp": 0}, {"objectType": "NULL", "hp": 0}],
+    [{"objectType": "NULL", "hp": 0}, {"objectType": "NULL", "hp": 0}, {"objectType": "NULL", "hp": 0}, {"objectType": "NULL", "hp": 0}, {"objectType": "NULL", "hp": 0}, {"objectType": "NULL", "hp": 0}, {"objectType": "NULL", "hp": 0}],
+    [{"objectType": "NULL", "hp": 0}, {"objectType": "NULL", "hp": 0}, {"objectType": "NULL", "hp": 0}, {"objectType": "NULL", "hp": 0}, {"objectType": "NULL", "hp": 0}, {"objectType": "NULL", "hp": 0}, {"objectType": "NULL", "hp": 0}],
+    [{"objectType": "NULL", "hp": 0}, {"objectType": "NULL", "hp": 0}, {"objectType": "NULL", "hp": 0}, {"objectType": "NULL", "hp": 0}, {"objectType": "NULL", "hp": 0}, {"objectType": "NULL", "hp": 0}, {"objectType": "NULL", "hp": 0}]
+  ]
+}

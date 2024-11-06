@@ -2,8 +2,11 @@ package GBTAN;
 
 import javax.swing.*;
 import java.awt.event.ActionEvent;
-import java.util.List;
+import java.io.File;
+import java.util.*;
+
 import GBTAN.GameData.GameState;
+import GBTAN.CollideableObject.ObjectType;
 
 public class Game {
     // Class that oversees the transition between game states and rounds.
@@ -11,13 +14,15 @@ public class Game {
     private final GameFrame gameFrame;
     private final PhysicsEngine physicsEngine;
     private final AimHandler aimHandler;
+    private final Random rng;
 
     public Game() {
-        gameData = new GameData(this);
+        gameData = new GameData(new Player(new File("defaultPlayer.json")), this);
         gameFrame = new GameFrame(this);
         physicsEngine = new PhysicsEngine(this);
         physicsEngine.getPhysicsTimer().addActionListener(this::checkGameState);
         aimHandler = new AimHandler(this);
+        rng = new Random();
 
         gameFrame.getEndRoundButton().addActionListener(e -> {
             for (Ball ball: gameData.getBallsInPlay()) {
@@ -38,8 +43,9 @@ public class Game {
         return physicsEngine;
     }
 
-    public void initializeGame(GameData.GameConfig gameConfig) {
+    public void initializeGame(GameConfig gameConfig) {
         gameData.initialize(gameConfig);
+        spawnRow();
         setGameState(GameState.AIMING);
     }
 
@@ -60,7 +66,7 @@ public class Game {
         // We start paying attention to the "New Game" button: pressing it initializes a new game
         JButton newGameButton = gameFrame.getGamePanel().getNewGameButton();
         newGameButton.addActionListener(e-> {
-            initializeGame(GameSettings.DEFAULT_CONFIG());
+            initializeGame(new GameConfig(new File("defaultConfig.json")));
         });
     }
 
@@ -116,6 +122,43 @@ public class Game {
         }
     }
 
+    private <T> T randomChoice(Map<T, Double> weights) {
+        double totalWeight = 0.0;
+        for (Double weigth: weights.values()) {totalWeight += weigth;}
+        double randomNumber = rng.nextDouble()*totalWeight;
+        for (Map.Entry<T, Double> entry: weights.entrySet()) {
+            randomNumber -= entry.getValue();
+            if (randomNumber <= 0.0) {
+                return entry.getKey();
+            }
+        }
+        return null;
+    }
+
+    private void spawnRow() {
+        Player player = gameData.getPlayer();
+        List<CollideableObject> objects = new LinkedList<>();
+        objects.add(new PlusOne(GameSettings.BOON_RADIUS, this));
+        Integer blockNum = randomChoice(player.getBlockNumChance());
+        for (int i=0; i<blockNum; i++) {
+            ObjectType type = randomChoice(player.getBlockTypeChance());
+            int hp = rng.nextDouble() <= player.getDoubleHPChance()? 2*gameData.getScore() : gameData.getScore();
+            Block block = new Block(type, hp, this);
+            objects.add(block);
+        }
+        if (objects.size() < GameSettings.BLOCK_COLUMNS && rng.nextDouble() <= player.getRandomizerChance()) {
+            objects.add(new Randomizer(GameSettings.BOON_RADIUS, this));
+        }
+        while (objects.size() < GameSettings.BLOCK_COLUMNS) {
+            objects.add(null);
+        }
+        Collections.shuffle(objects);
+        ObjectSpot[] topRow = gameData.getSpots()[0];
+        for (int i=0; i< topRow.length; i++) {
+            gameData.assignObjectToSpot(objects.get(i), topRow[i]);
+        }
+    }
+
     private void checkGameState(ActionEvent event) {
         // Gets called once per physics loop: checks if the game's state must be updated
         switch (gameData.getGameState()) {
@@ -125,6 +168,8 @@ public class Game {
                 if (gameData.getBallsInPlay().isEmpty()) {
                     setGameState(GameState.AIMING);
                     shiftObjects();
+                    spawnRow();
+                    gameData.setScore(gameData.getScore()+1);
                 }
                 break;
             case GameState.AIMING:

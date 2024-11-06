@@ -1,14 +1,24 @@
 package GBTAN;
 
 import java.awt.geom.Point2D;
-import java.util.List;
 
 public abstract class CollideableObject {
+    public enum ObjectType {
+        SQUARE,
+        TRIANGLE_LOWER_LEFT,
+        TRIANGLE_LOWER_RIGHT,
+        TRIANGLE_UPPER_LEFT,
+        TRIANGLE_UPPER_RIGHT,
+        RANDOMIZER,
+        PLUS_ONE,
+        NULL
+    }
+
     protected ObjectSpot spot;
     protected Game game;
 
-    public CollideableObject(ObjectSpot spot, Game game) {
-        this.spot = spot;
+    public CollideableObject(Game game) {
+        this.spot = null;
         this.game = game;
     }
 
