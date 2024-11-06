@@ -37,7 +37,7 @@ public class GameFrame extends JFrame {
 
         this.setTitle("GBTAN");
         this.pack();
-        this.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+        this.setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
         this.setLocationRelativeTo(null);
         this.setResizable(false);
         this.setVisible(true);

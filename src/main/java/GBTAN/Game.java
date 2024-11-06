@@ -36,6 +36,7 @@ public class Game {
             gameFrame.getSpeedUpButton().setEnabled(false);
         });
 
+        gameFrame.addWindowListener(new Disposer(this));
     }
 
     public GameData getGameData() {
