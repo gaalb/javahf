@@ -14,7 +14,7 @@ public abstract class Boon extends CollideableObject {
         return radius;
     }
 
-    abstract public void bless(Ball ball);
+    abstract public void affect(Ball ball);
 
     public boolean isSpent() {
         return spent;

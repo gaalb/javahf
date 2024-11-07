@@ -13,12 +13,10 @@ public class GameSettings {
     public static final int BLOCK_ROWS = 9;
     public static final int GAME_WIDTH = BLOCK_WIDTH*BLOCK_COLUMNS;
     public static final int GAME_HEIGHT = BLOCK_HEIGHT*BLOCK_ROWS;
-    public static final int GAME_DIAMETER = (int)Math.sqrt(Math.pow(GAME_HEIGHT, 2) + Math.pow(GAME_WIDTH, 2));
     public static final int FPS = 100;
     public static final int PHYSICS_TIMER_FREQ = 200;
     public static final int PHYSICS_FREQ = 1000;
     public static final double BALL_SPEED = 1.5;
-    public static final int STARTING_BALL_NUM = 4;
     public static final int FRAMES_BETWEEN_BALLS = 8;
     public static final double EPS = 0.1;
     public static final double MIN_AIM_ANGLE = 20;

@@ -9,7 +9,7 @@ public class PlusOne extends Boon {
     }
 
     @Override
-    public void bless(Ball ball) {
+    public void affect(Ball ball) {
         if (!spent) spent = true;
     }
 }

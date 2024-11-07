@@ -10,7 +10,9 @@ import java.util.List;
 
 public class GameData {
     public enum GameState {
-        PLAYING, AIMING, GAME_OVER;
+        PLAYING, // Balls are flying, cannon disabled
+        AIMING, // Waiting for the player to fire
+        GAME_OVER // Waiting to start new game
     }
     private final ObjectSpot[][] spots;  // ObjectSpots are static for the whole game duration, hence array not list
     private final List<Ball> balls;
@@ -103,6 +105,7 @@ public class GameData {
     }
 
     public void clearObjects() {
+        // clear the board: all spots should store null objects
         for (ObjectSpot[] row: spots) {
             for (ObjectSpot spot: row) {
                 if (spot.getObject() != null) {
@@ -142,7 +145,7 @@ public class GameData {
                         obj = new Randomizer(GameSettings.BOON_RADIUS, game);
                         assignObjectToSpot(obj, spot);
                         break;
-                    default:
+                    default: // default = Block
                         obj = new Block(config.objectType, config.hp, game);
                         assignObjectToSpot(obj, spot);
                         break;

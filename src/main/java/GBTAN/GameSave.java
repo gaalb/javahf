@@ -19,7 +19,27 @@ public class GameSave {
     public SpotConfig[][] spots;
 
     public GameSave(File file) {
-        loadFromFile(file);
+        try (JsonReader reader = Json.createReader(new FileInputStream(file))) {
+            JsonObject gameConfigJson = reader.readObject();
+            this.ballNum = gameConfigJson.getInt("ballNum");
+            this.cannonPos = gameConfigJson.getJsonNumber("cannonPos").doubleValue();
+            this.score = gameConfigJson.getInt("score");
+            JsonArray spotsArray = gameConfigJson.getJsonArray("spots");
+            this.spots = new SpotConfig[spotsArray.size()][];
+            for (int i = 0; i < spotsArray.size(); i++) {
+                JsonArray rowArray = spotsArray.getJsonArray(i);
+                spots[i] = new SpotConfig[rowArray.size()];
+                for (int j = 0; j < rowArray.size(); j++) {
+                    JsonObject spotJson = rowArray.getJsonObject(j);
+                    SpotConfig spotConfig = new SpotConfig();
+                    spotConfig.objectType = ObjectType.valueOf(spotJson.getString("objectType"));
+                    spotConfig.hp = spotJson.getInt("hp");
+                    spots[i][j] = spotConfig;
+                }
+            }
+        } catch (IOException e) {
+            System.out.println("JSON file couldn't be read.");
+        }
     }
 
     public GameSave(Game game) {
@@ -49,8 +69,8 @@ public class GameSave {
         for (SpotConfig[] row: spots) {
             JsonArrayBuilder rowArrayBuilder = Json.createArrayBuilder();
             for (SpotConfig spot: row) {
-                JsonObject spotJson = Json.createObjectBuilder().
-                        add("objectType", spot.objectType.name())
+                JsonObject spotJson = Json.createObjectBuilder()
+                        .add("objectType", spot.objectType.name())
                         .add("hp", spot.hp)
                         .build();
                 rowArrayBuilder.add(spotJson);
@@ -64,31 +84,4 @@ public class GameSave {
             System.out.println("JSON file couldn't be written.");
         }
     }
-
-    public void loadFromFile(File file) {
-        try (JsonReader reader = Json.createReader(new FileInputStream(file))) {
-            JsonObject gameConfigJson = reader.readObject();
-
-            this.ballNum = gameConfigJson.getInt("ballNum");
-            this.cannonPos = gameConfigJson.getJsonNumber("cannonPos").doubleValue();
-            this.score = gameConfigJson.getInt("score");
-
-            JsonArray spotsArray = gameConfigJson.getJsonArray("spots");
-            this.spots = new SpotConfig[spotsArray.size()][];
-            for (int i = 0; i < spotsArray.size(); i++) {
-                JsonArray rowArray = spotsArray.getJsonArray(i);
-                spots[i] = new SpotConfig[rowArray.size()];
-                for (int j = 0; j < rowArray.size(); j++) {
-                    JsonObject spotJson = rowArray.getJsonObject(j);
-                    SpotConfig spotConfig = new SpotConfig();
-                    spotConfig.objectType = ObjectType.valueOf(spotJson.getString("objectType"));
-                    spotConfig.hp = spotJson.getInt("hp");
-                    spots[i][j] = spotConfig;
-                }
-            }
-        } catch (IOException e) {
-            System.out.println("JSON file couldn't be read.");
-        }
-    }
-
 }

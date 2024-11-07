@@ -84,6 +84,7 @@ public class Cannon {
 
     public void fireAll() {
         Timer timer = game.getPhysicsEngine().getPhysicsTimer();
+        // The fire handler fires all the balls using fireSingleBall
         FireHandler fireHandler = new FireHandler(GameSettings.FRAMES_BETWEEN_BALLS, timer);
         timer.addActionListener(fireHandler);
     }

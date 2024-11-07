@@ -20,24 +20,29 @@ public class Game {
     private int score;
 
     public Game(Player player, GameSave gameSave) {
-        this.player = player;
-        this.score = gameSave.score;
+        this.player = player;  // player contains configurations mostly
+        this.score = gameSave.score;  // gameSave is used to load/export game state (blocks, boons, etc.)
         gameData = new GameData(this);
         gameFrame = new GameFrame(this);
         physicsEngine = new PhysicsEngine(this);
         physicsEngine.getPhysicsTimer().addActionListener(this::checkGameState);
         aimHandler = new AimHandler(this);
-        rng = new Random();
+        rng = new Random();  // random number generator
 
         gameFrame.getEndRoundButton().addActionListener(e -> {
             for (Ball ball: gameData.getBallsInPlay()) {
-                gameData.getCannon().returnBall(ball);
+                gameData.getCannon().returnBall(ball);  // rounds can be ended by returning all balls
             }
         });
 
         gameFrame.getSpeedUpButton().addActionListener(e -> {
             physicsEngine.doubleSpeed();
             gameFrame.getSpeedUpButton().setEnabled(false);
+        });
+
+        JButton newGameButton = gameFrame.getGamePanel().getNewGameButton();
+        newGameButton.addActionListener(e-> {
+            newGame();
         });
 
         gameFrame.addWindowListener(new Disposer(this));
@@ -84,11 +89,6 @@ public class Game {
         gameFrame.getSpeedUpButton().setEnabled(false);
         physicsEngine.resetSpeed();
         physicsEngine.stopPhysics();  // the game is over, so physics (bounces, movement) must be disabled
-        // We start paying attention to the "New Game" button: pressing it initializes a new game
-        JButton newGameButton = gameFrame.getGamePanel().getNewGameButton();
-        newGameButton.addActionListener(e-> {
-            newGame();
-        });
     }
 
     private void setAiming() {
@@ -123,11 +123,13 @@ public class Game {
     }
 
     private void cleanUpSpentBoons() {
+        // Boons that get used/are spent can be deleted with this method
         for (ObjectSpot[] row: gameData.getSpots()) {
             for (ObjectSpot spot: row) {
                 CollideableObject o = spot.getObject();
                 if (o instanceof Boon && ((Boon)o).isSpent()) {
                     if (o instanceof PlusOne) {
+                        // In the case of PlusOne, we must also add a new ball when removing it.
                         Ball newBall = new Ball(new Point2D.Double(0,0), new Point2D.Double(0,0),
                                 GameSettings.BALL_RADIUS, Ball.BallState.RETURNED, this);
                         gameData.getBalls().add(newBall);
@@ -154,9 +156,12 @@ public class Game {
     }
 
     private <T> T randomChoice(Map<T, Double> weights) {
+        // Returns an element randomly chosen from the dictionary's keys
+        // The higher the value corresponding to the key, the higher the chance it gets chosen (relative chances).
         double totalWeight = 0.0;
-        for (Double weigth: weights.values()) {totalWeight += weigth;}
+        for (Double weigth: weights.values()) {totalWeight += weigth;} // sum of relative chances
         double randomNumber = rng.nextDouble()*totalWeight;
+        // compare the random number to the rolling sum of relative chances: when we surpass it, return
         for (Map.Entry<T, Double> entry: weights.entrySet()) {
             randomNumber -= entry.getValue();
             if (randomNumber <= 0.0) {
@@ -167,21 +172,27 @@ public class Game {
     }
 
     private void spawnRow() {
+        // Populate the topmost row with objects, according to the settings of the player
+        // We do this by filling a list with the possible objects, then filling it with nulls until it's
+        // the correct size, then shuffling it
         List<CollideableObject> objects = new LinkedList<>();
-        objects.add(new PlusOne(GameSettings.BOON_RADIUS, this));
-        Integer blockNum = randomChoice(player.getBlockNumChance());
+        objects.add(new PlusOne(GameSettings.BOON_RADIUS, this));  // spawn a PlusOne each round
+        Integer blockNum = randomChoice(player.getBlockNumChance());  // RNG determines the spawned block count
         for (int i=0; i<blockNum; i++) {
-            ObjectType type = randomChoice(player.getBlockTypeChance());
-            int hp = rng.nextDouble() <= player.getDoubleHPChance()? 2*score : score;
+            ObjectType type = randomChoice(player.getBlockTypeChance());  // RNG determines block type
+            int hp = rng.nextDouble() <= player.getDoubleHPChance()? 2*score : score;  // RNG: double hp or not
             Block block = new Block(type, hp, this);
             objects.add(block);
         }
+        // If we have space left for a randomizer, RNG may decide to spawn one
         if (objects.size() < GameSettings.BLOCK_COLUMNS && rng.nextDouble() <= player.getRandomizerChance()) {
             objects.add(new Randomizer(GameSettings.BOON_RADIUS, this));
         }
+        // Fill with nulls, which will result in empty spots
         while (objects.size() < GameSettings.BLOCK_COLUMNS) {
             objects.add(null);
         }
+        // Shuffle then place the generated objects
         Collections.shuffle(objects);
         ObjectSpot[] topRow = gameData.getSpots()[0];
         for (int i=0; i< topRow.length; i++) {
@@ -190,7 +201,8 @@ public class Game {
     }
 
     public void newGame() {
-        if (score > player.getHighScore()) {
+        // A new game is where we initialize the game with an empty spot list
+        if (score > player.getHighScore()) { // Before starting the new game, save the possible high score
             player.setHighScore(score);
             File playerFile = new File(GameSettings.PLAYERS_FOLDER, player.getName()+".json");
             player.saveToFile(playerFile);
@@ -203,10 +215,10 @@ public class Game {
     }
 
     private void newRound() {
-        cleanUpSpentBoons();
-        shiftObjects();
-        score++;
-        spawnRow();
+        cleanUpSpentBoons(); // delete used boons
+        shiftObjects(); // push objects down a row
+        score++; // indicate we survived a round
+        spawnRow(); // populate topmost row, which is empty now that we pushed all rows down
         setGameState(GameState.AIMING);
     }
 

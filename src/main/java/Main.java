@@ -4,7 +4,6 @@ import javax.swing.*;
 
 public class Main {
     public static void main(String[] args) {
-        // SELECT PLAYER PROFILE AND SAVE FILE HERE
         SwingUtilities.invokeLater(()-> {
             PreGameMenu preGameMenu = new PreGameMenu(null);
             GameSave save = new GameSave(preGameMenu.getSaveFile());

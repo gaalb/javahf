@@ -46,10 +46,6 @@ public class Block extends CollideableObject {
         this.health = health;
     }
 
-    public ObjectType getType() {
-        return type;
-    }
-
     public void setType(ObjectType type) {
         this.type = type;
         setCornersToSpot();
@@ -76,7 +72,7 @@ public class Block extends CollideableObject {
         return sides;
     }
 
-    public Polygon getPolygon() {
+    public Polygon getPolygon() { // required for displaying
         Point2D.Double[] points = getCorners();
         int[] xPoints = new int[points.length];
         int[] yPoints = new int[points.length];
@@ -89,7 +85,7 @@ public class Block extends CollideableObject {
 
     public void decrementHealth() {
         this.health -= 1;
-        if (this.health <= 0) {
+        if (this.health <= 0) { // dies at 0 hp
             game.getGameData().destroyObject(this);
         }
     }

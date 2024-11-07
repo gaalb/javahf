@@ -4,14 +4,14 @@ import java.awt.geom.Point2D;
 
 public abstract class CollideableObject {
     public enum ObjectType {
-        SQUARE,
-        TRIANGLE_LOWER_LEFT,
-        TRIANGLE_LOWER_RIGHT,
-        TRIANGLE_UPPER_LEFT,
-        TRIANGLE_UPPER_RIGHT,
-        RANDOMIZER,
-        PLUS_ONE,
-        NULL
+        SQUARE,  // Block
+        TRIANGLE_LOWER_LEFT,  // Block
+        TRIANGLE_LOWER_RIGHT,  // Block
+        TRIANGLE_UPPER_LEFT,  // Block
+        TRIANGLE_UPPER_RIGHT,  // Block
+        RANDOMIZER,  // Boon
+        PLUS_ONE,  // Boon
+        NULL  // Empty spot
     }
 
     protected ObjectSpot spot;

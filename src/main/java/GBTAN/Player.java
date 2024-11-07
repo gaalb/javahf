@@ -8,6 +8,7 @@ import java.util.HashMap;
 import java.util.Map;
 
 public class Player {
+    // A player is just a name, a highscore, and a bunch of settings for spawning new rows
     private String name;
     private int highScore;
     private double doubleBlockChance;
@@ -32,7 +33,30 @@ public class Player {
     }
 
     public Player(File file) {
-        loadFromFile(file);
+        try (JsonReader reader = Json.createReader(new FileInputStream(file))) {
+            JsonObject playerJson = reader.readObject();
+            this.name = playerJson.getString("name");
+            this.highScore = playerJson.getInt("highScore");
+            this.doubleBlockChance = playerJson.getJsonNumber("doubleBlockChance").doubleValue();
+            this.randomizerChance = playerJson.getJsonNumber("randomizerChance").doubleValue();
+            this.blockTypeChance = new HashMap<>();
+            this.blockTypeChance = new HashMap<>();
+            JsonObject blockTypeJson = playerJson.getJsonObject("blockTypeChance");
+            for (String key : blockTypeJson.keySet()) {
+                ObjectType blockType = ObjectType.valueOf(key);
+                double chance = blockTypeJson.getJsonNumber(key).doubleValue();
+                blockTypeChance.put(blockType, chance);
+            }
+            this.blockNumChance = new HashMap<>();
+            JsonObject blockNumJson = playerJson.getJsonObject("blockNumChance");
+            for (String key : blockNumJson.keySet()) {
+                int number = Integer.parseInt(key);
+                double chance = blockNumJson.getJsonNumber(key).doubleValue();
+                blockNumChance.put(number, chance);
+            }
+        } catch (IOException e) {
+            System.out.println("JSON file couldn't be read.");
+        }
     }
 
     public String getName() {
@@ -72,35 +96,6 @@ public class Player {
             writer.writeObject(playerJson);
         } catch (IOException e) {
             System.out.println("JSON file couldn't be written.");
-        }
-    }
-
-    public void loadFromFile(File file) {
-        try (JsonReader reader = Json.createReader(new FileInputStream(file))) {
-            JsonObject playerJson = reader.readObject();
-            this.name = playerJson.getString("name");
-            this.highScore = playerJson.getInt("highScore");
-            this.doubleBlockChance = playerJson.getJsonNumber("doubleBlockChance").doubleValue();
-            this.randomizerChance = playerJson.getJsonNumber("randomizerChance").doubleValue();
-
-            this.blockTypeChance = new HashMap<>();
-            this.blockTypeChance = new HashMap<>();
-            JsonObject blockTypeJson = playerJson.getJsonObject("blockTypeChance");
-            for (String key : blockTypeJson.keySet()) {
-                ObjectType blockType = ObjectType.valueOf(key);
-                double chance = blockTypeJson.getJsonNumber(key).doubleValue();
-                blockTypeChance.put(blockType, chance);
-            }
-
-            this.blockNumChance = new HashMap<>();
-            JsonObject blockNumJson = playerJson.getJsonObject("blockNumChance");
-            for (String key : blockNumJson.keySet()) {
-                int number = Integer.parseInt(key);
-                double chance = blockNumJson.getJsonNumber(key).doubleValue();
-                blockNumChance.put(number, chance);
-            }
-        } catch (IOException e) {
-            System.out.println("JSON file couldn't be read.");
         }
     }
 }

@@ -10,8 +10,8 @@ public class GameFrame extends JFrame {
     private final javax.swing.Timer displayTimer;
     private final JButton endRoundButton;
     private final JButton speedUpButton;
-    private final JPanel bottomPanel;
-    private final TopPanel topPanel;
+    private final JPanel bottomPanel; // bottom panel houses buttons
+    private final TopPanel topPanel; // top panel shows score and user name
 
     public GameFrame(Game game) {
         // Timer that ticks with the desired FPS value, regardless of the physics rate.

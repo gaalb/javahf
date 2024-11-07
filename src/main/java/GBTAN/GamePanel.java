@@ -5,7 +5,6 @@ import java.awt.*;
 import java.awt.geom.AffineTransform;
 import java.awt.geom.Point2D;
 import java.util.List;
-import java.util.Random;
 
 import GBTAN.GameData.GameState;
 
@@ -52,7 +51,6 @@ public class GamePanel extends JPanel {
             for (int col = 0; col < GameSettings.BLOCK_COLUMNS; col++) {
                 ObjectSpot spot = gameData.getSpots()[row][col];
                 Point2D.Double center = spot.getCenter();
-
                 int dotRadius = 6;
                 int dotX = (int) (center.x - 0.5* dotRadius);
                 int dotY = (int) (center.y - 0.5* dotRadius);
@@ -172,22 +170,22 @@ public class GamePanel extends JPanel {
         int r = (int)boon.getRadius();
         int x = (int)boon.getPosition().x;
         int y = (int)boon.getPosition().y;
-        if (boon instanceof PlusOne) {
+        if (boon instanceof PlusOne && !boon.isSpent()) {  // plus ones are not displayed once spent
             g2d.setColor(Color.CYAN);
             g2d.setStroke(new BasicStroke(4));
             g2d.drawOval(x-r, y-r, 2*r, 2*r);
-            g2d.drawLine(x, y-r+2, x, y+r-2);
-            g2d.drawLine(x-r+2, y, x+r-2, y);
+            g2d.drawLine(x, y-r+2, x, y+r-2);  // -2 so the lines don't reach out of the oval
+            g2d.drawLine(x-r+2, y, x+r-2, y);  // -2 so the lines don't reach out of the oval
         } else if (boon instanceof Randomizer) {
             g2d.setColor(Color.MAGENTA);
             g2d.setStroke(new BasicStroke(4));
             g2d.drawOval(x-r, y-r, 2*r, 2*r);
             AffineTransform originalTransform = g2d.getTransform();
             g2d.translate(x, y);
-            g2d.rotate(Math.PI/4);
-            g2d.drawLine(0, 2-r, 0, r-2);
-            g2d.drawLine(2-r, 0, r-2, 0);
-            g2d.setTransform(originalTransform);
+            g2d.rotate(Math.PI/4); // rotate 45 degrees to display an X instead of a +
+            g2d.drawLine(0, 2-r, 0, r-2); // -2 so the lines don't reach out of the oval
+            g2d.drawLine(2-r, 0, r-2, 0); // -2 so the lines don't reach out of the oval
+            g2d.setTransform(originalTransform);  // restore original transform to not mess with the rest of the display
         }
     }
 
@@ -197,7 +195,7 @@ public class GamePanel extends JPanel {
             for (ObjectSpot spot: row) {
                 CollideableObject obj = spot.getObject();
                 if (obj instanceof Block) paintBlock((Block)obj, g2d);
-                else if (obj instanceof Boon && !((Boon)obj).isSpent()) paintBoon((Boon) obj, g2d);
+                else if (obj instanceof Boon) paintBoon((Boon) obj, g2d);
             }
         }
     }
@@ -209,8 +207,9 @@ public class GamePanel extends JPanel {
         String message = "GAME OVER";
         int x = (getWidth() - metrics.stringWidth(message)) / 2;
         int y = (getHeight() - metrics.getHeight()) / 2;
+        // Draw shadow for the text: paint the same text with an offset behind the actual text, in black
         g2d.setColor(Color.BLACK);
-        g2d.drawString(message, x + 3, y + 3); // Draw shadow for the text (looks nice)
+        g2d.drawString(message, x + 3, y + 3);
         g2d.setColor(Color.RED);
         g2d.drawString(message, x, y);
         newGameButton.setVisible(true);

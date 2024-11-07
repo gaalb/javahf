@@ -4,7 +4,9 @@ import java.awt.geom.Point2D;
 
 public class Ball {
     public enum BallState {
-        IN_STORE, IN_PLAY, RETURNED;
+        IN_STORE, // in the cannon, ready to get fired
+        IN_PLAY, // flying around in the game area
+        RETURNED // exited the game area, but it's not yet ready to fire
     }
 
     private Point2D.Double position;
@@ -29,7 +31,7 @@ public class Ball {
         return new Point2D.Double(velocity.x, velocity.y);
     }
 
-    public double getAbsVelocity() {
+    public double getAbsVelocity() { // length of velocity vector
         return Math.sqrt(Math.pow(velocity.x, 2) + Math.pow(velocity.y, 2));
     }
 
@@ -74,6 +76,7 @@ public class Ball {
         if (position.x < radius) velocity.x = Math.abs(velocity.x); // left wall
         if (position.x > GameSettings.GAME_WIDTH - radius) velocity.x = -Math.abs(velocity.x);  // right wall
         if (position.y < radius) velocity.y = Math.abs(velocity.y); // top wall
+        // bottom wall absent, because we let the ball escape there
     }
 
     public void bounceOffPoint(Point2D.Double point) {

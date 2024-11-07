@@ -23,7 +23,7 @@ public class PhysicsEngine {
     }
 
     public void doubleSpeed() {
-        physicsStepsPerTick *= 2;
+        physicsStepsPerTick *= 2;  // speeds up the physics loop without affecting fps
     }
 
     public void resetSpeed() {
@@ -156,7 +156,7 @@ public class PhysicsEngine {
         }
         for (Boon boon: gameData.getBoons()) {
             if (ball.getPosition().distance(boon.getPosition()) <= boon.getRadius() + ball.getRadius() + GameSettings.EPS) {
-                boon.bless(ball);
+                boon.affect(ball);
             }
         }
         ball.bounceOffWalls();
