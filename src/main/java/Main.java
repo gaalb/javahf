@@ -1,16 +1,15 @@
-import GBTAN.Game;
-import GBTAN.GameSettings;
-import GBTAN.GameConfig;
+import GBTAN.*;
 
 import javax.swing.*;
-import java.io.File;
 
 public class Main {
     public static void main(String[] args) {
+        // SELECT PLAYER PROFILE AND SAVE FILE HERE
         SwingUtilities.invokeLater(()-> {
-            Game game = new Game();
-            GameConfig c = new GameConfig(new File("defaultConfig.json"));
-            game.initializeGame(c);
+            PreGameMenu preGameMenu = new PreGameMenu(null);
+            GameSave save = new GameSave(preGameMenu.getSaveFile());
+            Player player = new Player(preGameMenu.getPlayerFile());
+            Game game = new Game(player, save);
         });
     }
 }

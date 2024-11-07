@@ -1,0 +1,1 @@
+{"name":"Teszt Elek","highScore":9,"doubleBlockChance":0.2,"randomizerChance":0.2,"blockTypeChance":{"TRIANGLE_UPPER_RIGHT":0.1,"SQUARE":0.4,"TRIANGLE_UPPER_LEFT":0.1,"TRIANGLE_LOWER_RIGHT":0.1,"TRIANGLE_LOWER_LEFT":0.1},"blockNumChance":{"1":0.2,"2":0.3,"3":0.3,"4":0.2,"5":0.2,"6":0.05}}

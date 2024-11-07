@@ -20,11 +20,11 @@ public class TopPanel extends JPanel {
         Font font = new Font("SansSerif", Font.BOLD, 22);
         g2d.setFont(font);
         FontMetrics metrics = g2d.getFontMetrics(font);
-        String score = String.valueOf(game.getGameData().getScore());
+        String score = String.valueOf(game.getScore());
         int scoreWidth = metrics.stringWidth(score);
         int middleX = (getWidth()-scoreWidth)/2;
         g2d.drawString(score, middleX, metrics.getAscent());
-        String name = game.getGameData().getPlayer().getName();
+        String name = game.getPlayer().getName();
         g2d.drawString(name, GameSettings.BLOCK_WIDTH/2, metrics.getAscent());
         String prog3 = "ProgAlap 3";
         int prog3Width = metrics.stringWidth(prog3);

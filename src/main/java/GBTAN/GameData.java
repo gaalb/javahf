@@ -1,7 +1,7 @@
 package GBTAN;
 
 import GBTAN.Ball.BallState;
-import GBTAN.GameConfig.SpotConfig;
+import GBTAN.GameSave.SpotConfig;
 
 import java.awt.geom.Point2D;
 import java.util.LinkedList;
@@ -12,31 +12,15 @@ public class GameData {
     public enum GameState {
         PLAYING, AIMING, GAME_OVER;
     }
-    private Player player;
     private final ObjectSpot[][] spots;  // ObjectSpots are static for the whole game duration, hence array not list
     private final List<CollideableObject> objects;
     private final List<Ball> balls;
     private final Game game;
     private GameState gameState;
     private Cannon cannon;
-    private int score;
 
-    public Player getPlayer() {
-        return player;
-    }
-
-    public int getScore() {
-        return score;
-    }
-
-    public void setScore(int score) {
-        this.score = score;
-    }
-
-    public GameData(Player player, Game game) {
-        this.game = game;
-        this.player = player;
-        this.score = 1;
+    public GameData(Game game) {
+        this.game = game;;
         spots = new ObjectSpot[GameSettings.BLOCK_ROWS][GameSettings.BLOCK_COLUMNS];
         initializeSpots();
         objects = new LinkedList<>();  // contains all CollideableObjects: Blocks or Boons
@@ -125,6 +109,7 @@ public class GameData {
     }
 
     public void clearObjects() {
+        objects.clear();
         for (ObjectSpot[] row: spots) {
             for (ObjectSpot spot: row) {
                 if (spot.getObject() != null) {
@@ -146,13 +131,12 @@ public class GameData {
         objects.remove(object); // remove the reference to the Object from the GameData
     }
 
-    public void initialize(GameConfig gameConfig) {
-        score = gameConfig.score;
+    public void initialize(GameSave gameSave) {
         clearObjects();
         balls.clear();
-        for (int y=0; y<gameConfig.spots.length; y++) {
-            for (int x=0; x<gameConfig.spots[y].length; x++) {
-                SpotConfig config = gameConfig.spots[y][x];
+        for (int y = 0; y< gameSave.spots.length; y++) {
+            for (int x = 0; x< gameSave.spots[y].length; x++) {
+                SpotConfig config = gameSave.spots[y][x];
                 ObjectSpot spot = spots[y][x];
                 CollideableObject obj;
                 switch (config.objectType) {
@@ -160,12 +144,13 @@ public class GameData {
                         spot.setObject(null);
                         break;
                     case PLUS_ONE:
-                        obj = new PlusOne(GameSettings.BALL_RADIUS, game);
+                        obj = new PlusOne(GameSettings.BOON_RADIUS, game);
                         assignObjectToSpot(obj, spot);
                         break;
                     case RANDOMIZER:
-                        obj = new Randomizer(GameSettings.BALL_RADIUS, game);
+                        obj = new Randomizer(GameSettings.BOON_RADIUS, game);
                         assignObjectToSpot(obj, spot);
+                        break;
                     default:
                         obj = new Block(config.objectType, config.hp, game);
                         assignObjectToSpot(obj, spot);
@@ -173,8 +158,8 @@ public class GameData {
                 }
             }
         }
-        cannon = new Cannon(gameConfig.cannonPos, 90, game);
-        for (int i=0; i<gameConfig.ballNum; i++) {
+        cannon = new Cannon(gameSave.cannonPos, 90, game);
+        for (int i = 0; i< gameSave.ballNum; i++) {
             Ball ball = new Ball(cannon.getPosition(), new Point2D.Double(0, 0), GameSettings.BALL_RADIUS, BallState.IN_STORE, game);
             balls.add(ball);
             cannon.storeBall(ball);

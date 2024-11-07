@@ -16,9 +16,13 @@ public class Game {
     private final PhysicsEngine physicsEngine;
     private final AimHandler aimHandler;
     private final Random rng;
+    private final Player player;
+    private int score;
 
-    public Game() {
-        gameData = new GameData(new Player(new File("defaultPlayer.json")), this);
+    public Game(Player player, GameSave gameSave) {
+        this.player = player;
+        this.score = gameSave.score;
+        gameData = new GameData(this);
         gameFrame = new GameFrame(this);
         physicsEngine = new PhysicsEngine(this);
         physicsEngine.getPhysicsTimer().addActionListener(this::checkGameState);
@@ -37,6 +41,17 @@ public class Game {
         });
 
         gameFrame.addWindowListener(new Disposer(this));
+
+        gameData.initialize(gameSave);
+        setGameState(GameState.AIMING);
+    }
+
+    public Player getPlayer() {
+        return player;
+    }
+
+    public int getScore() {
+        return score;
     }
 
     public GameData getGameData() {
@@ -49,12 +64,6 @@ public class Game {
 
     public PhysicsEngine getPhysicsEngine() {
         return physicsEngine;
-    }
-
-    public void initializeGame(GameConfig gameConfig) {
-        gameData.initialize(gameConfig);
-        spawnRow();
-        setGameState(GameState.AIMING);
     }
 
     private void setPlaying() {
@@ -78,7 +87,7 @@ public class Game {
         // We start paying attention to the "New Game" button: pressing it initializes a new game
         JButton newGameButton = gameFrame.getGamePanel().getNewGameButton();
         newGameButton.addActionListener(e-> {
-            initializeGame(new GameConfig(new File("defaultConfig.json")));
+            newGame();
         });
     }
 
@@ -138,11 +147,8 @@ public class Game {
             ObjectSpot[] upperRow = spots[i-1];
             ObjectSpot[] lowerRow = spots[i];
             for (int j=0; j<lowerRow.length; j++) {
-                CollideableObject o = upperRow[j].getObject();
-                if (o != null) {
-                    lowerRow[j].setObject(upperRow[j].getObject());
-                    upperRow[j].clearObject();
-                }
+                lowerRow[j].setObject(upperRow[j].getObject());
+                upperRow[j].clearObject();
             }
         }
     }
@@ -161,13 +167,12 @@ public class Game {
     }
 
     private void spawnRow() {
-        Player player = gameData.getPlayer();
         List<CollideableObject> objects = new LinkedList<>();
         objects.add(new PlusOne(GameSettings.BOON_RADIUS, this));
         Integer blockNum = randomChoice(player.getBlockNumChance());
         for (int i=0; i<blockNum; i++) {
             ObjectType type = randomChoice(player.getBlockTypeChance());
-            int hp = rng.nextDouble() <= player.getDoubleHPChance()? 2*gameData.getScore() : gameData.getScore();
+            int hp = rng.nextDouble() <= player.getDoubleHPChance()? 2*score : score;
             Block block = new Block(type, hp, this);
             objects.add(block);
         }
@@ -184,6 +189,27 @@ public class Game {
         }
     }
 
+    public void newGame() {
+        if (score > player.getHighScore()) {
+            player.setHighScore(score);
+            File playerFile = new File(GameSettings.PLAYERS_FOLDER, player.getName()+".json");
+            player.saveToFile(playerFile);
+            System.out.println("HIGH SCORE!");
+        }
+        GameSave newGameSave = new GameSave(GameSettings.DEFAULT_SAVE_FILE);
+        gameData.initialize(newGameSave);
+        score = newGameSave.score;
+        setGameState(GameState.AIMING);
+    }
+
+    private void newRound() {
+        cleanUpSpentBoons();
+        shiftObjects();
+        score++;
+        spawnRow();
+        setGameState(GameState.AIMING);
+    }
+
     private void checkGameState(ActionEvent event) {
         // Gets called once per physics loop: checks if the game's state must be updated
         switch (gameData.getGameState()) {
@@ -191,11 +217,7 @@ public class Game {
                 // When the round is playing (balls are moving, aiming is off), we must switch back to
                 // aiming if all the balls go out of play
                 if (gameData.getBallsInPlay().isEmpty()) {
-                    cleanUpSpentBoons();
-                    shiftObjects();
-                    spawnRow();
-                    gameData.setScore(gameData.getScore()+1);
-                    setGameState(GameState.AIMING);
+                    newRound();
                 }
                 break;
             case GameState.AIMING:

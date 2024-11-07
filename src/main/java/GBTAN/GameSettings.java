@@ -1,5 +1,6 @@
 package GBTAN;
 
+import java.io.File;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -22,4 +23,8 @@ public class GameSettings {
     public static final double EPS = 0.1;
     public static final double MIN_AIM_ANGLE = 20;
     public static final double BOON_RADIUS = 13;
+    public static final File SAVES_FOLDER = new File("saves");
+    public static final File PLAYERS_FOLDER = new File("players");
+    public static final File DEFAULT_SAVE_FILE = new File(SAVES_FOLDER, "defaultSave.json");
+    public static final File DEFAULT_PLAYER_FILE = new File(PLAYERS_FOLDER, "defaultPlayer.json");
 }

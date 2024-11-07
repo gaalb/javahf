@@ -8,7 +8,7 @@ import java.io.FileInputStream;
 import java.io.FileOutputStream;
 import java.io.IOException;
 
-public class GameConfig {
+public class GameSave {
     public static class SpotConfig {
         public ObjectType objectType;
         public int hp;
@@ -18,8 +18,26 @@ public class GameConfig {
     public int score;
     public SpotConfig[][] spots;
 
-    public GameConfig(File file) {
+    public GameSave(File file) {
         loadFromFile(file);
+    }
+
+    public GameSave(Game game) {
+        GameData gameData = game.getGameData();
+        ballNum = gameData.getBalls().size();
+        cannonPos = gameData.getCannon().getPosition().x;
+        score = game.getScore();
+        ObjectSpot[][] objectSpots = gameData.getSpots();
+        spots = new SpotConfig[GameSettings.BLOCK_ROWS][GameSettings.BLOCK_COLUMNS];
+        for (int i=0; i<GameSettings.BLOCK_ROWS; i++) {
+            for (int j=0; j<GameSettings.BLOCK_COLUMNS; j++) {
+                CollideableObject obj = objectSpots[i][j].getObject();
+                SpotConfig spotConfig = new SpotConfig();
+                spotConfig.hp = obj instanceof Block ? ((Block) obj).getHealth() : 0;
+                spotConfig.objectType = obj == null ? ObjectType.NULL : obj.getType();
+                spots[i][j] = spotConfig;
+            }
+        }
     }
 
     public void saveToFile(File file) {

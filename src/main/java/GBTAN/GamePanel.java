@@ -130,70 +130,74 @@ public class GamePanel extends JPanel {
         }
     }
 
-    private void paintBoons(Graphics2D g2d) {
-        List<Boon> boons = gameData.getBoons();
-        for (Boon boon: boons) {
-            int r = (int)boon.getRadius();
-            int x = (int)boon.getPosition().x;
-            int y = (int)boon.getPosition().y;
-            if (boon instanceof PlusOne && !boon.isSpent()) {
-                g2d.setColor(Color.CYAN);
-                g2d.setStroke(new BasicStroke(4));
-                g2d.drawOval(x-r, y-r, 2*r, 2*r);
-                g2d.drawLine(x, y-r, x, y+r);
-                g2d.drawLine(x-r, y, x+r, y);
-            } else if (boon instanceof Randomizer) {
-                g2d.setColor(Color.MAGENTA);
-                g2d.setStroke(new BasicStroke(4));
-                g2d.drawOval(x-r, y-r, 2*r, 2*r);
-                AffineTransform originalTransform = g2d.getTransform();
-                g2d.translate(x, y);
-                g2d.rotate(Math.PI/4);
-                g2d.drawLine(0, -r, 0, r);
-                g2d.drawLine(-r, 0, r, 0);
-                g2d.setTransform(originalTransform);
-            }
+    private void paintBlock(Block block, Graphics2D g2d) {
+        g2d.setFont(new Font("SansSerif", Font.BOLD, 18)); // Font for the HP
+        g2d.setColor(Color.BLUE);
+        g2d.fillPolygon(block.getPolygon()); // body
+        g2d.setColor(Color.BLACK);
+        g2d.setStroke(new BasicStroke(2));
+        g2d.drawPolygon(block.getPolygon()); // outline
+        String healthText = String.valueOf(block.getHealth()); // HP
+        FontMetrics fm = g2d.getFontMetrics();
+        int textWidth = fm.stringWidth(healthText);
+        int textHeight = fm.getAscent();
+        g2d.setColor(Color.YELLOW);
+        Point2D.Double position;
+        // Depending on the type of the block, we must place the text in a different position to look nice
+        switch (block.getType()) {
+            case SQUARE:
+                position = block.getPosition();
+                g2d.drawString(healthText, (int)position.x - textWidth / 2, (int)position.y + textHeight / 2);
+                break;
+            case TRIANGLE_LOWER_LEFT:
+            case TRIANGLE_LOWER_RIGHT:
+                position = new Point2D.Double(
+                        (block.getCorners()[0].x + block.getCorners()[1].x + block.getCorners()[2].x) / 3,
+                        (block.getCorners()[0].y + block.getCorners()[1].y + block.getCorners()[2].y) / 3
+                );
+                g2d.drawString(healthText, (int)position.x - textWidth / 2, (int)position.y + textHeight / 2);
+                break;
+            case TRIANGLE_UPPER_LEFT:
+            case TRIANGLE_UPPER_RIGHT:
+                position = new Point2D.Double(
+                        (block.getCorners()[0].x + block.getCorners()[1].x + block.getCorners()[2].x) / 3,
+                        (block.getCorners()[0].y + block.getCorners()[1].y + block.getCorners()[2].y) / 3
+                );
+                g2d.drawString(healthText, (int)position.x - textWidth / 2, (int)position.y);
+                break;
         }
     }
 
-    private void paintBlocks(Graphics2D g2d) {
-        List<Block> blocks = gameData.getBlocks();
-        g2d.setFont(new Font("SansSerif", Font.BOLD, 18)); // Font for the HP
+    private void paintBoon(Boon boon, Graphics2D g2d)  {
+        int r = (int)boon.getRadius();
+        int x = (int)boon.getPosition().x;
+        int y = (int)boon.getPosition().y;
+        if (boon instanceof PlusOne) {
+            g2d.setColor(Color.CYAN);
+            g2d.setStroke(new BasicStroke(4));
+            g2d.drawOval(x-r, y-r, 2*r, 2*r);
+            g2d.drawLine(x, y-r, x, y+r);
+            g2d.drawLine(x-r, y, x+r, y);
+        } else if (boon instanceof Randomizer) {
+            g2d.setColor(Color.MAGENTA);
+            g2d.setStroke(new BasicStroke(4));
+            g2d.drawOval(x-r, y-r, 2*r, 2*r);
+            AffineTransform originalTransform = g2d.getTransform();
+            g2d.translate(x, y);
+            g2d.rotate(Math.PI/4);
+            g2d.drawLine(0, -r, 0, r);
+            g2d.drawLine(-r, 0, r, 0);
+            g2d.setTransform(originalTransform);
+        }
+    }
 
-        for (Block block : blocks) {
-            g2d.setColor(Color.BLUE);
-            g2d.fillPolygon(block.getPolygon()); // body
-            g2d.setColor(Color.BLACK);
-            g2d.setStroke(new BasicStroke(2));
-            g2d.drawPolygon(block.getPolygon()); // outline
-            String healthText = String.valueOf(block.getHealth()); // HP
-            FontMetrics fm = g2d.getFontMetrics();
-            int textWidth = fm.stringWidth(healthText);
-            int textHeight = fm.getAscent();
-            g2d.setColor(Color.YELLOW);
-            Point2D.Double position;
-            // Depending on the type of the block, we must place the text in a different position to look nice
-            switch (block.getType()) {
-                case SQUARE:
-                    position = block.getPosition();
-                    g2d.drawString(healthText, (int)position.x - textWidth / 2, (int)position.y + textHeight / 2);
-                    break;
-                case TRIANGLE_LOWER_LEFT:
-                case TRIANGLE_LOWER_RIGHT:
-                    position = new Point2D.Double(
-                            (block.getCorners()[0].x + block.getCorners()[1].x + block.getCorners()[2].x) / 3,
-                            (block.getCorners()[0].y + block.getCorners()[1].y + block.getCorners()[2].y) / 3
-                    );
-                    g2d.drawString(healthText, (int)position.x - textWidth / 2, (int)position.y + textHeight / 2);
-                    break;
-                case TRIANGLE_UPPER_LEFT:
-                case TRIANGLE_UPPER_RIGHT:
-                    position = new Point2D.Double(
-                            (block.getCorners()[0].x + block.getCorners()[1].x + block.getCorners()[2].x) / 3,
-                            (block.getCorners()[0].y + block.getCorners()[1].y + block.getCorners()[2].y) / 3
-                    );
-                    g2d.drawString(healthText, (int)position.x - textWidth / 2, (int)position.y);
-                    break;
+    private void paintObjects(Graphics2D g2d) {
+        ObjectSpot[][] spots = gameData.getSpots();
+        for (ObjectSpot[] row: spots) {
+            for (ObjectSpot spot: row) {
+                CollideableObject obj = spot.getObject();
+                if (obj instanceof Block) paintBlock((Block)obj, g2d);
+                else if (obj instanceof Boon && !((Boon)obj).isSpent()) paintBoon((Boon) obj, g2d);
             }
         }
     }
@@ -232,8 +236,7 @@ public class GamePanel extends JPanel {
         g2d.setRenderingHint(RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_ON);
         paintBackground(g2d);
         paintObjectSpots(g2d);
-        paintBlocks(g2d);
-        paintBoons(g2d);
+        paintObjects(g2d);
         switch (gameData.getGameState()) {
             case GameState.PLAYING:
                 paintPlaying(g2d);

@@ -1,6 +1,6 @@
 {
   "name": "Teszt Elek",
-  "highScore": 10,
+  "highScore": 2,
   "doubleBlockChance": 0.2,
   "randomizerChance": 0.2,
   "blockTypeChance": {

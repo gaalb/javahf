@@ -10,7 +10,7 @@
     [{"objectType": "NULL", "hp": 0}, {"objectType": "NULL", "hp": 0}, {"objectType": "NULL", "hp": 0}, {"objectType": "NULL", "hp": 0}, {"objectType": "NULL", "hp": 0}, {"objectType": "NULL", "hp": 0}, {"objectType": "NULL", "hp": 0}],
     [{"objectType": "NULL", "hp": 0}, {"objectType": "NULL", "hp": 0}, {"objectType": "NULL", "hp": 0}, {"objectType": "NULL", "hp": 0}, {"objectType": "NULL", "hp": 0}, {"objectType": "NULL", "hp": 0}, {"objectType": "NULL", "hp": 0}],
     [{"objectType": "NULL", "hp": 0}, {"objectType": "NULL", "hp": 0}, {"objectType": "NULL", "hp": 0}, {"objectType": "NULL", "hp": 0}, {"objectType": "NULL", "hp": 0}, {"objectType": "NULL", "hp": 0}, {"objectType": "NULL", "hp": 0}],
-    [{"objectType": "NULL", "hp": 0}, {"objectType": "NULL", "hp": 0}, {"objectType": "NULL", "hp": 0}, {"objectType": "NULL", "hp": 0}, {"objectType": "NULL", "hp": 0}, {"objectType": "NULL", "hp": 0}, {"objectType": "NULL", "hp": 0}],
+    [{"objectType": "PLUS_ONE", "hp": 0}, {"objectType": "RANDOMIZER", "hp": 0}, {"objectType": "NULL", "hp": 0}, {"objectType": "NULL", "hp": 0}, {"objectType": "NULL", "hp": 0}, {"objectType": "NULL", "hp": 0}, {"objectType": "NULL", "hp": 0}],
     [{"objectType": "NULL", "hp": 0}, {"objectType": "NULL", "hp": 0}, {"objectType": "NULL", "hp": 0}, {"objectType": "NULL", "hp": 0}, {"objectType": "NULL", "hp": 0}, {"objectType": "NULL", "hp": 0}, {"objectType": "NULL", "hp": 0}]
   ]
 }

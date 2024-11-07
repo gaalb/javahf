@@ -6,7 +6,6 @@ import java.awt.geom.Point2D;
 
 public class Block extends CollideableObject {
     private Point2D.Double[] corners;
-    private ObjectType type;
     private int health;
 
     private void setCornersToSpot() {

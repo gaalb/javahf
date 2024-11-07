@@ -1,87 +1,17 @@
-Model:
-    GameData: minden információ a játékról
-        Player
-            Profile: beállítások, hány labdája volt, honnan lőhetett
-            State: hány labda van még a tárban, hány labda jött vissza, mi a szög
-        CollideableObject-ek
-            Blockok: Polygon reprezentáció, középpont'
-            Segítségek: kör alak
-        Labdák: sebesség, irány, pozíció
-            Collision logika
-            Movement logika
+Logikus, elvárt működés:
+Betöltünk, kezdőképernyő:
+-Két gomb:
+    -load player profile -> tallózás a players mappából
+    -use default profile -> automatikusan a defaultPlayer-t használja
 
-View:
-    GameFrame
-    GamePanel
+-Ha megtörtént, megint két gomb:
+    -load save
+    -new game
 
-Controller:
-    Engine
-    InputHandler
+Szétválasztani:
+    -Van loadSave
+    -van newGame, ami egy loadSave, és egy spawnRow
 
-
-Collision detection:
-Egy ütközés mindig egy pontban fog történni, mert körrel fog az ütközés
-történni. Az ütközéskor az ütközési pont és a kör középpontja kijelölnek
-egy egyenest. Az ezzel az egyenessel párhuzamos sebességkomponens megfordul.
-Honnan lesz a pont?
-1.: a végpontok a körbe esnek-e?
-    1.a: ha igen, végpont ütközés, és a végpont a keresett pont
-    1.b: ha nem, akkor vagy nincs ütközés vagy oldal ütközés
-2.: megkeressük az egyenes körhöz legközelebb eső pontját
-3.: ha ez a pont nem esik az egyenesre, nincs collision
-4.: ha ez a pont az egyenesre esik, és távolsága a körtől kisebb,
-    mint a sugár, collision van és ő lesz a collision pont
-
-
-Tehát egyelőre meddig jussunk el, mi legyen a flow?
--legyenek meg a model classok
--fekete háttéren legyenek meg a helyet jelző dolgok
--legyen egy labda amivel célzunk
--lőjük ki a labdát
--pattanjon le egy blokkról
--pattanjon vissza a falakról
--egészen amíg az aljára nem ér
-
-GOLYÓ MECHANIKA:
--Az engine setupol egy timert
--Amikor a timer tickel, a játékban lévő labdák updatelődnek
-    -a sebességüknek megfelelően frissül a pozíciójuk
-    -csekkolják az ütközéseket: először a fallal, aztán az objektumokkal
-    -ha kimennek a játékterületről, kimennek a játékból
--A tárban lévő labdáknak az ágyú ad kezdő sebességet
-
-Refactor irányelvek:
--A Data maga csak tárol mint eddig
--A gameEngine-ből bizonyos logikákat át kell vinni az osztályokba
-    -pl a labda tud mozogni, és pattanni
--Külön a physicsEngine és gameSupervisor (Game?)
-    -physicsEngine a fizikáért felel, az update-jében
-    -gameSupervisor a játékot kezeli: köröket pörget, blokkokat mozgat
-        -!!! listenereket állítgat
--A Frame ugyanúgy mint eddig, de benne a Panel egyszerűbben
-    -a panelnek egy dolgot kell tudnia: displayGameData
-        -mégpedig fázistól függően 3 féle lehet
-
-
-A játékoshoz tartozik, azaz PlayerConfig-ba megy
--high score
--név
--sor spawn szabályok
-    -blokk súlyfüggvény
-    -blokkszám súlyfüggvény
-    -szóró esélye
-    -2x esély
-
-A játékálláshoz tartozik, azaz GameConfig-ba megy:
--golyók száma
--ágyú pozíció
--score
--sorok configja
-    -ezek spotok configjai
-        -milyen objektum van benne
-        -ha blokk, akkor típusa és hpja
-
-Ezek alapján 3 funkció:
--játékos betöltés
--állás betöltés
--sorgenerálás
+Mikor kell mit menteni?
+-Player profilba high scoret kell menteni, mikor game over és high score lett
+-game statet kell menteni egy automatikusan elnevezett fájlba mikor ki X-elik

@@ -16,10 +16,16 @@ public abstract class CollideableObject {
 
     protected ObjectSpot spot;
     protected Game game;
+    protected ObjectType type;
 
     public CollideableObject(Game game) {
+        this.type = ObjectType.NULL;
         this.spot = null;
         this.game = game;
+    }
+
+    public ObjectType getType() {
+        return type;
     }
 
     public ObjectSpot getSpot() {
