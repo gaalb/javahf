@@ -176,8 +176,8 @@ public class GamePanel extends JPanel {
             g2d.setColor(Color.CYAN);
             g2d.setStroke(new BasicStroke(4));
             g2d.drawOval(x-r, y-r, 2*r, 2*r);
-            g2d.drawLine(x, y-r, x, y+r);
-            g2d.drawLine(x-r, y, x+r, y);
+            g2d.drawLine(x, y-r+2, x, y+r-2);
+            g2d.drawLine(x-r+2, y, x+r-2, y);
         } else if (boon instanceof Randomizer) {
             g2d.setColor(Color.MAGENTA);
             g2d.setStroke(new BasicStroke(4));
@@ -185,8 +185,8 @@ public class GamePanel extends JPanel {
             AffineTransform originalTransform = g2d.getTransform();
             g2d.translate(x, y);
             g2d.rotate(Math.PI/4);
-            g2d.drawLine(0, -r, 0, r);
-            g2d.drawLine(-r, 0, r, 0);
+            g2d.drawLine(0, 2-r, 0, r-2);
+            g2d.drawLine(2-r, 0, r-2, 0);
             g2d.setTransform(originalTransform);
         }
     }

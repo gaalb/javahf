@@ -13,7 +13,6 @@ public class GameData {
         PLAYING, AIMING, GAME_OVER;
     }
     private final ObjectSpot[][] spots;  // ObjectSpots are static for the whole game duration, hence array not list
-    private final List<CollideableObject> objects;
     private final List<Ball> balls;
     private final Game game;
     private GameState gameState;
@@ -23,20 +22,15 @@ public class GameData {
         this.game = game;;
         spots = new ObjectSpot[GameSettings.BLOCK_ROWS][GameSettings.BLOCK_COLUMNS];
         initializeSpots();
-        objects = new LinkedList<>();  // contains all CollideableObjects: Blocks or Boons
         balls = new LinkedList<>();  // contains all Balls: IN_STORE, IN_PLAY or RETURNED
-    }
-
-    public List<CollideableObject> getObjects() {
-        return objects;
     }
 
     public List<Block> getBlocks() {
         // Some CollideableObjects in objects are Blocks, some are Boons: return the Blocks.
         List<Block> blocks = new LinkedList<>();
-        for (CollideableObject object: objects) {
-            if (object instanceof Block) {
-                blocks.add((Block)object);
+        for (ObjectSpot[] row: spots) {
+            for (ObjectSpot spot: row) {
+                if (spot.getObject() instanceof Block) blocks.add((Block)spot.getObject());
             }
         }
         return blocks;
@@ -45,9 +39,9 @@ public class GameData {
     public List<Boon> getBoons() {
         // Some CollideableObjects in objects are Blocks, some are Boons: return the Boons.
         List<Boon> boons = new LinkedList<>();
-        for (CollideableObject object: objects) {
-            if (object instanceof Boon) {
-                boons.add((Boon)object);
+        for (ObjectSpot[] row: spots) {
+            for (ObjectSpot spot: row) {
+                if (spot.getObject() instanceof Boon) boons.add((Boon) spot.getObject());
             }
         }
         return boons;
@@ -109,7 +103,6 @@ public class GameData {
     }
 
     public void clearObjects() {
-        objects.clear();
         for (ObjectSpot[] row: spots) {
             for (ObjectSpot spot: row) {
                 if (spot.getObject() != null) {
@@ -122,13 +115,11 @@ public class GameData {
     public void assignObjectToSpot(CollideableObject o, ObjectSpot spot) {
         if (spot.getObject() != null) destroyObject(spot.getObject());
         spot.setObject(o);
-        this.objects.add(o);
     }
 
     public void destroyObject(CollideableObject object) {
         object.getSpot().clearObject(); // destroy the reference to the Object in the Spot
         object.setSpot(null); // destroy the reference to the Spot in the Object
-        objects.remove(object); // remove the reference to the Object from the GameData
     }
 
     public void initialize(GameSave gameSave) {
