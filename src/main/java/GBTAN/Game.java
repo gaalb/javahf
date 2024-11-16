@@ -9,25 +9,64 @@ import java.util.*;
 import GBTAN.GameData.GameState;
 import GBTAN.CollideableObject.ObjectType;
 
+/**
+ * Manages the core gameplay loop, including game state transitions, round management,
+ * and interactions between game components such as the physics engine, GUI, and player data.
+ */
 public class Game {
-    // Class that oversees the transition between game states and rounds.
+
+    /**
+     * Stores and manages the state of the game, including objects on the grid and game state transitions.
+     */
     private final GameData gameData;
+
+    /**
+     * The graphical user interface for the game, including buttons and the game panel.
+     */
     private final GameFrame gameFrame;
+
+    /**
+     * Manages physics, such as ball movement and collisions.
+     */
     private final PhysicsEngine physicsEngine;
+
+    /**
+     * Handles aiming based on player input.
+     */
     private final AimHandler aimHandler;
+
+    /**
+     * Random number generator for gameplay elements such as spawning objects.
+     */
     private final Random rng;
+
+    /**
+     * The player associated with the game, storing configuration and statistics.
+     */
     private final Player player;
+
+    /**
+     * The current score of the game, representing the number of rounds survived.
+     */
     private int score;
 
+    /**
+     * Initializes a new game instance with a player and a saved game state.
+     *
+     * @param player   the player associated with this game.
+     * @param gameSave the saved game state to load.
+     * @see GameSave
+     * @see GameData
+     */
     public Game(Player player, GameSave gameSave) {
-        this.player = player;  // player contains configurations mostly
-        this.score = gameSave.score;  // gameSave is used to load/export game state (blocks, boons, etc.)
+        this.player = player;
+        this.score = gameSave.score;
         gameData = new GameData(this);
         gameFrame = new GameFrame(this);
         physicsEngine = new PhysicsEngine(this);
         physicsEngine.getPhysicsTimer().addActionListener(this::checkGameState);
         aimHandler = new AimHandler(this);
-        rng = new Random();  // random number generator
+        rng = new Random();
 
         gameFrame.getEndRoundButton().addActionListener(e -> {
             for (Ball ball: gameData.getBallsInPlay()) {
@@ -41,9 +80,7 @@ public class Game {
         });
 
         JButton newGameButton = gameFrame.getGamePanel().getNewGameButton();
-        newGameButton.addActionListener(e-> {
-            newGame();
-        });
+        newGameButton.addActionListener(e -> newGame());
 
         gameFrame.addWindowListener(new Disposer(this));
 
@@ -51,26 +88,58 @@ public class Game {
         setGameState(GameState.AIMING);
     }
 
+    /**
+     * Gets the player associated with the game.
+     *
+     * @return the player instance.
+     */
     public Player getPlayer() {
         return player;
     }
 
+    /**
+     * Gets the current score of the game.
+     *
+     * @return the score.
+     */
     public int getScore() {
         return score;
     }
 
+    /**
+     * Gets the game data object, which tracks objects on the grid and manages game state transitions.
+     *
+     * @return the game data.
+     * @see GameData
+     */
     public GameData getGameData() {
         return gameData;
     }
 
+    /**
+     * Gets the graphical interface for the game.
+     *
+     * @return the game frame.
+     * @see GameFrame
+     */
     public GameFrame getGameFrame() {
         return gameFrame;
     }
 
+    /**
+     * Gets the physics engine for the game.
+     *
+     * @return the physics engine.
+     * @see PhysicsEngine
+     */
     public PhysicsEngine getPhysicsEngine() {
         return physicsEngine;
     }
 
+    /**
+     * Configures the game components when entering the "playing" state.
+     * The player cannot aim, and physics are activated to move the balls.
+     */
     private void setPlaying() {
         // When transitioning into "playing", the balls are moving, but the player cannot aim, meaning we that
         // the aim handler (which turns the cannon) must be disabled
@@ -81,6 +150,10 @@ public class Game {
         physicsEngine.resetSpeed();
     }
 
+    /**
+     * Configures the game components when entering the "game over" state.
+     * All interactions are disabled, and physics are stopped.
+     */
     private void setGameOver() {
         // When the game is over, the player cannot aim -> disable aim handler
         gameFrame.getGamePanel().removeMouseListener(aimHandler);
@@ -91,6 +164,10 @@ public class Game {
         physicsEngine.stopPhysics();  // the game is over, so physics (bounces, movement) must be disabled
     }
 
+    /**
+     * Configures the game components when entering the "aiming" state.
+     * Enables the aim handler for mouse inputs and prepares the balls for firing.
+     */
     private void setAiming() {
         // When the game is in its aiming stage, the aim handler must listen for mouse inputs
         gameFrame.getGamePanel().addMouseListener(aimHandler);
@@ -109,52 +186,67 @@ public class Game {
         }
     }
 
+    /**
+     * Sets the current state of the game and updates components accordingly.
+     *
+     * @param newState the new game state.
+     * @see GameState
+     */
     public void setGameState(GameState newState) {
         gameData.setGameState(newState);
         if (newState == GameState.PLAYING) {
             setPlaying();
-        }
-        if (newState == GameState.AIMING) {
+        } else if (newState == GameState.AIMING) {
             setAiming();
-        }
-        if (newState == GameState.GAME_OVER) {
+        } else if (newState == GameState.GAME_OVER) {
             setGameOver();
         }
     }
 
+    /**
+     * Removes spent boons from the game grid and handles specific actions for certain boons,
+     * such as adding balls for {@link PlusOne}.
+     */
     private void cleanUpSpentBoons() {
-        // Boons that get used/are spent can be deleted with this method
-        for (ObjectSpot[] row: gameData.getSpots()) {
-            for (ObjectSpot spot: row) {
-                CollideableObject o = spot.getObject();
-                if (o instanceof Boon && ((Boon)o).isSpent()) {
-                    if (o instanceof PlusOne) {
-                        // In the case of PlusOne, we must also add a new ball when removing it.
-                        Ball newBall = new Ball(new Point2D.Double(0,0), new Point2D.Double(0,0),
+        for (ObjectSpot[] row : gameData.getSpots()) {
+            for (ObjectSpot spot : row) {
+                CollideableObject obj = spot.getObject();
+                if (obj instanceof Boon && ((Boon) obj).isSpent()) {
+                    if (obj instanceof PlusOne) {
+                        Ball newBall = new Ball(new Point2D.Double(0, 0), new Point2D.Double(0, 0),
                                 GameSettings.BALL_RADIUS, Ball.BallState.RETURNED, this);
                         gameData.getBalls().add(newBall);
                     }
-                    gameData.destroyObject(o);
+                    gameData.destroyObject(obj);
                 }
             }
         }
     }
 
+    /**
+     * Moves all objects on the grid one row down, clearing the top row for new objects.
+     */
     private void shiftObjects() {
-        // Moves all blocks present one row down, except the last row (since they have nowhere to go).
         ObjectSpot[][] spots = gameData.getSpots();
         // Starting at the last row, and moving up (the other way around wouldn't work because
         // by the time we get to the Nth row, its object would be overwritten by the N-1th row.
         for (int i = spots.length-1; i > 0; i--) {
             ObjectSpot[] upperRow = spots[i-1];
             ObjectSpot[] lowerRow = spots[i];
-            for (int j=0; j<lowerRow.length; j++) {
+            for (int j = 0; j < lowerRow.length; j++) {
                 lowerRow[j].setObject(upperRow[j].getObject());
                 upperRow[j].clearObject();
             }
         }
     }
 
+    /**
+     * Randomly selects an element from a map of weights, with higher weights increasing the selection probability.
+     *
+     * @param weights a map of elements and their corresponding weights.
+     * @param <T>     the type of elements in the map.
+     * @return a randomly selected element.
+     */
     private <T> T randomChoice(Map<T, Double> weights) {
         // Returns an element randomly chosen from the dictionary's keys
         // The higher the value corresponding to the key, the higher the chance it gets chosen (relative chances).
@@ -171,6 +263,10 @@ public class Game {
         return null;
     }
 
+    /**
+     * Spawns a new row of objects at the top of the grid, including blocks and boons,
+     * based on the player's configuration.
+     */
     private void spawnRow() {
         // Populate the topmost row with objects, according to the settings of the player
         // We do this by filling a list with the possible objects, then filling it with nulls until it's
@@ -195,16 +291,19 @@ public class Game {
         // Shuffle then place the generated objects
         Collections.shuffle(objects);
         ObjectSpot[] topRow = gameData.getSpots()[0];
-        for (int i=0; i< topRow.length; i++) {
+        for (int i = 0; i < topRow.length; i++) {
             gameData.assignObjectToSpot(objects.get(i), topRow[i]);
         }
     }
 
+    /**
+     * Initializes a new game, resetting the game state and saving the player's high score if applicable.
+     */
     public void newGame() {
         // A new game is where we initialize the game with an empty spot list
         if (score > player.getHighScore()) { // Before starting the new game, save the possible high score
             player.setHighScore(score);
-            File playerFile = new File(GameSettings.PLAYERS_FOLDER, player.getName()+".json");
+            File playerFile = new File(GameSettings.PLAYERS_FOLDER, player.getName() + ".json");
             player.saveToFile(playerFile);
             System.out.println("HIGH SCORE!");
         }
@@ -214,6 +313,10 @@ public class Game {
         setGameState(GameState.AIMING);
     }
 
+    /**
+     * Advances the game to a new round by cleaning up spent boons, shifting objects, updating the score,
+     * and spawning a new row of objects.
+     */
     private void newRound() {
         cleanUpSpentBoons(); // delete used boons
         shiftObjects(); // push objects down a row
@@ -222,6 +325,11 @@ public class Game {
         setGameState(GameState.AIMING);
     }
 
+    /**
+     * Monitors the game state during each physics tick and transitions between states if conditions are met.
+     *
+     * @param event the action event triggered by the physics timer.
+     */
     private void checkGameState(ActionEvent event) {
         // Gets called once per physics loop: checks if the game's state must be updated
         switch (gameData.getGameState()) {
@@ -235,9 +343,9 @@ public class Game {
             case GameState.AIMING:
                 // When we start the aiming phase of the game, if the last row isn't empty, it means the
                 // game is over (blocks are touching the bottom of the screen).
-                ObjectSpot[] lastRow = gameData.getSpots()[GameSettings.BLOCK_ROWS-1];
-                for (ObjectSpot spot: lastRow) {
-                    if (spot.getObject() != null && (spot.getObject() instanceof Block)) {
+                ObjectSpot[] lastRow = gameData.getSpots()[GameSettings.BLOCK_ROWS - 1];
+                for (ObjectSpot spot : lastRow) {
+                    if (spot.getObject() instanceof Block) {
                         setGameState(GameState.GAME_OVER);
                         return;
                     }
@@ -248,8 +356,6 @@ public class Game {
                 }
                 break;
             case GameState.GAME_OVER:
-                break;
-            default:
                 break;
         }
     }
