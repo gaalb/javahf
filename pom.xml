@@ -22,7 +22,6 @@
     </repositories>
 
     <dependencies>
-        <!-- Other dependencies -->
         <dependency>
             <groupId>org.junit.jupiter</groupId>
             <artifactId>junit-jupiter</artifactId>
@@ -36,4 +35,19 @@
         </dependency>
     </dependencies>
 
+    <build>
+        <plugins>
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-javadoc-plugin</artifactId>
+                <version>3.4.1</version>
+                <configuration>
+                    <source>22</source>
+                    <encoding>UTF-8</encoding>
+                    <quiet>true</quiet>
+                    <sourcepath>${project.basedir}/src/main/java/GBTAN</sourcepath>
+                </configuration>
+            </plugin>
+        </plugins>
+    </build>
 </project>
