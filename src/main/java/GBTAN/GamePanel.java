@@ -8,12 +8,36 @@ import java.util.List;
 
 import GBTAN.GameData.GameState;
 
+/**
+ * Represents the main panel of the game, handling drawing of cannons, balls, blocks, boons.
+ */
 public class GamePanel extends JPanel {
+
+    /**
+     * The dimensions of the game panel, matching the game's width and height.
+     */
     private final Dimension dimension;
+
+    /**
+     * The main game instance associated with this panel.
+     */
     private final Game game;
+
+    /**
+     * The game data, containing the state of all game objects.
+     */
     private final GameData gameData;
+
+    /**
+     * The button to start a new game, shown only when the game is over.
+     */
     private JButton newGameButton;
 
+    /**
+     * Constructs a new GamePanel and initializes its layout and components.
+     *
+     * @param game The main game instance.
+     */
     public GamePanel(Game game) {
         this.game = game;
         this.gameData = game.getGameData();
@@ -24,6 +48,9 @@ public class GamePanel extends JPanel {
         setupNewGameButton();
     }
 
+    /**
+     * Initializes and configures the "New Game" button, hiding it by default.
+     */
     public void setupNewGameButton() {
         // The newGameButton is always present in memory, but is hidden and inactive normally
         newGameButton = new JButton("NEW GAME");
@@ -35,15 +62,30 @@ public class GamePanel extends JPanel {
         add(Box.createVerticalGlue());
     }
 
+    /**
+     * Retrieves the "New Game" button.
+     *
+     * @return The "New Game" button.
+     */
     public JButton getNewGameButton() {
         return newGameButton;
     }
 
+    /**
+     * Paints the background of the game panel, which is dark gray.
+     *
+     * @param g2d The {@link Graphics2D} object used for painting.
+     */
     private void paintBackground(Graphics2D g2d) {
         g2d.setColor(Color.DARK_GRAY);
         g2d.fillRect(0, 0, getWidth(), getHeight());
     }
 
+    /**
+     * Paints the object spots as small dots on the grid.
+     *
+     * @param g2d The {@link Graphics2D} object used for painting.
+     */
     private void paintObjectSpots(Graphics2D g2d) {
         g2d.setColor(Color.LIGHT_GRAY);
         // Loop through each spot in the grid and draw a small dot at the center
@@ -59,8 +101,13 @@ public class GamePanel extends JPanel {
         }
     }
 
+    /**
+     * Paints the aiming assistance line and the projected point of ball collision.
+     *
+     * @param g2d The {@link Graphics2D} object used for painting.
+     * @see Cannon#project()
+     */
     private void paintAimAssist(Graphics2D g2d) {
-        // Paints the projected path of the balls as calculated by Cannon
         Cannon cannon = gameData.getCannon();
         double x = cannon.getPosition().getX();
         double y = cannon.getPosition().getY();
@@ -74,6 +121,11 @@ public class GamePanel extends JPanel {
         g2d.fillOval((int)aimAssistPoint.x-r, (int)aimAssistPoint.y-r, 2*r, 2*r);
     }
 
+    /**
+     * Paints the cannon, including its barrel and stored ball count.
+     *
+     * @param g2d The {@link Graphics2D} object used for painting.
+     */
     private void paintCannon(Graphics2D g2d) {
         Cannon cannon = gameData.getCannon();
         int circleRadius = 15;
@@ -113,6 +165,11 @@ public class GamePanel extends JPanel {
         g2d.drawString(ballText, (int)x+circleRadius, dimension.height-2);
     }
 
+    /**
+     * Paints all balls currently in play.
+     *
+     * @param g2d The {@link Graphics2D} object used for painting.
+     */
     private void paintBalls(Graphics2D g2d) {
         List<Ball> ballsInPlay = gameData.getBallsInPlay();
         for (Ball b: ballsInPlay) {
@@ -128,6 +185,12 @@ public class GamePanel extends JPanel {
         }
     }
 
+    /**
+     * Paints a single block, including its shape and health display.
+     *
+     * @param block The block to paint.
+     * @param g2d   The {@link Graphics2D} object used for painting.
+     */
     private void paintBlock(Block block, Graphics2D g2d) {
         g2d.setFont(new Font("SansSerif", Font.BOLD, 18)); // Font for the HP
         g2d.setColor(Color.BLUE);
@@ -166,6 +229,12 @@ public class GamePanel extends JPanel {
         }
     }
 
+    /**
+     * Paints a single boon, with visual differences based on its type.
+     *
+     * @param boon The boon to paint.
+     * @param g2d  The {@link Graphics2D} object used for painting.
+     */
     private void paintBoon(Boon boon, Graphics2D g2d)  {
         int r = (int)boon.getRadius();
         int x = (int)boon.getPosition().x;
@@ -189,6 +258,11 @@ public class GamePanel extends JPanel {
         }
     }
 
+    /**
+     * Paints all objects (blocks and boons) on the game grid.
+     *
+     * @param g2d The {@link Graphics2D} object used for painting.
+     */
     private void paintObjects(Graphics2D g2d) {
         ObjectSpot[][] spots = gameData.getSpots();
         for (ObjectSpot[] row: spots) {
@@ -200,6 +274,11 @@ public class GamePanel extends JPanel {
         }
     }
 
+    /**
+     * Paints the "Game Over" screen, including the "New Game" button.
+     *
+     * @param g2d The {@link Graphics2D} object used for painting.
+     */
     private void paintGameOver(Graphics2D g2d) {
         Font font = new Font("Arial", Font.BOLD, 48);
         g2d.setFont(font);
@@ -215,12 +294,22 @@ public class GamePanel extends JPanel {
         newGameButton.setVisible(true);
     }
 
+    /**
+     * Paints the game objects and UI elements for the "Playing" state.
+     *
+     * @param g2d The {@link Graphics2D} object used for painting.
+     */
     private void paintPlaying(Graphics2D g2d) {
         paintBalls(g2d);
         paintCannon(g2d);
         newGameButton.setVisible(false);
     }
 
+    /**
+     * Paints the game objects and UI elements for the "Aiming" state.
+     *
+     * @param g2d The {@link Graphics2D} object used for painting.
+     */
     private void paintAiming(Graphics2D g2d) {
         paintBalls(g2d);
         paintAimAssist(g2d);
@@ -228,6 +317,11 @@ public class GamePanel extends JPanel {
         newGameButton.setVisible(false);
     }
 
+    /**
+     * Paints the entire game panel, depending on the current game state.
+     *
+     * @param g The {@link Graphics} object used for painting.
+     */
     @Override
     protected void paintComponent(Graphics g) {
         super.paintComponent(g);
