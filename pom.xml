@@ -45,7 +45,7 @@
                     <source>22</source>
                     <encoding>UTF-8</encoding>
                     <quiet>true</quiet>
-                    <sourcepath>${project.basedir}/src/main/java/GBTAN</sourcepath>
+                    <show>private</show>
                 </configuration>
             </plugin>
         </plugins>

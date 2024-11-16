@@ -51,7 +51,7 @@ public class GamePanel extends JPanel {
     /**
      * Initializes and configures the "New Game" button, hiding it by default.
      */
-    public void setupNewGameButton() {
+    private void setupNewGameButton() {
         // The newGameButton is always present in memory, but is hidden and inactive normally
         newGameButton = new JButton("NEW GAME");
         newGameButton.setFont(new Font("Arial", Font.BOLD, 24));

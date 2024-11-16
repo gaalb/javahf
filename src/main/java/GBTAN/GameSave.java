@@ -8,16 +8,42 @@ import java.io.FileInputStream;
 import java.io.FileOutputStream;
 import java.io.IOException;
 
+/**
+ * Handles the serialization and deserialization of game state to and from JSON files.
+ * This class allows saving and loading the game state, including ball positions,
+ * cannon configurations, scores, and object configurations.
+ */
 public class GameSave {
+
+    /**
+     * Represents the configuration of a single game spot, including the type of object
+     * present and its health points (if applicable).
+     */
     public static class SpotConfig {
+        /** The type of the object in the spot. */
         public ObjectType objectType;
+
+        /** The health points of the object in the spot. */
         public int hp;
     }
+
+    /** The number of balls currently in play or in store. */
     public int ballNum;
+
+    /** The horizontal position of the cannon. */
     public double cannonPos;
+
+    /** The current score of the game. */
     public int score;
+
+    /** A 2D array of spot configurations, representing the state of the game grid. */
     public SpotConfig[][] spots;
 
+    /**
+     * Constructs a GameSave instance by loading data from a specified JSON file.
+     *
+     * @param file The file containing the saved game state in JSON format.
+     */
     public GameSave(File file) {
         try (JsonReader reader = Json.createReader(new FileInputStream(file))) {
             JsonObject gameConfigJson = reader.readObject();
@@ -42,6 +68,11 @@ public class GameSave {
         }
     }
 
+    /**
+     * Constructs a GameSave instance from the current game state.
+     *
+     * @param game The {@link Game} instance containing the current state to save.
+     */
     public GameSave(Game game) {
         GameData gameData = game.getGameData();
         ballNum = gameData.getBalls().size();
@@ -49,8 +80,8 @@ public class GameSave {
         score = game.getScore();
         ObjectSpot[][] objectSpots = gameData.getSpots();
         spots = new SpotConfig[GameSettings.BLOCK_ROWS][GameSettings.BLOCK_COLUMNS];
-        for (int i=0; i<GameSettings.BLOCK_ROWS; i++) {
-            for (int j=0; j<GameSettings.BLOCK_COLUMNS; j++) {
+        for (int i = 0; i < GameSettings.BLOCK_ROWS; i++) {
+            for (int j = 0; j < GameSettings.BLOCK_COLUMNS; j++) {
                 CollideableObject obj = objectSpots[i][j].getObject();
                 SpotConfig spotConfig = new SpotConfig();
                 spotConfig.hp = obj instanceof Block ? ((Block) obj).getHealth() : 0;
@@ -60,15 +91,20 @@ public class GameSave {
         }
     }
 
+    /**
+     * Saves the current game state to a specified file in JSON format.
+     *
+     * @param file The file to which the game state will be written.
+     */
     public void saveToFile(File file) {
-        JsonObjectBuilder gameConfigBuilder = Json.createObjectBuilder().
-                add("ballNum", ballNum)
+        JsonObjectBuilder gameConfigBuilder = Json.createObjectBuilder()
+                .add("ballNum", ballNum)
                 .add("cannonPos", cannonPos)
                 .add("score", score);
         JsonArrayBuilder spotsArrayBuilder = Json.createArrayBuilder();
-        for (SpotConfig[] row: spots) {
+        for (SpotConfig[] row : spots) {
             JsonArrayBuilder rowArrayBuilder = Json.createArrayBuilder();
-            for (SpotConfig spot: row) {
+            for (SpotConfig spot : row) {
                 JsonObject spotJson = Json.createObjectBuilder()
                         .add("objectType", spot.objectType.name())
                         .add("hp", spot.hp)
