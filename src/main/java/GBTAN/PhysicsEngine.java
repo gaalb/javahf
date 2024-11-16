@@ -6,12 +6,36 @@ import java.awt.geom.Line2D;
 import java.awt.geom.Point2D;
 import java.util.*;
 
+/**
+ * Handles the physics simulation for the game, including ball movement, collision detection,
+ * and interactions with objects such as blocks and boons.
+ */
 public class PhysicsEngine {
+    /**
+     * The game instance associated with this physics engine.
+     */
     private final Game game;
+
+    /**
+     * The game data instance used for retrieving and managing game state.
+     */
     private final GameData gameData;
-    private javax.swing.Timer physicsTimer;
+
+    /**
+     * The timer responsible for driving the physics loop at regular intervals.
+     */
+    private Timer physicsTimer;
+
+    /**
+     * The number of physics steps executed per timer tick, allowing finer control over the physics simulation.
+     */
     private int physicsStepsPerTick;
 
+    /**
+     * Constructs a PhysicsEngine for the specified game.
+     *
+     * @param game The game instance for which the physics engine is responsible.
+     */
     public PhysicsEngine(Game game) {
         this.game = game;
         this.gameData = game.getGameData();
@@ -22,35 +46,65 @@ public class PhysicsEngine {
         physicsTimer.start();
     }
 
+    /**
+     * Doubles the speed of the physics simulation without affecting the frame rate.
+     */
     public void doubleSpeed() {
-        physicsStepsPerTick *= 2;  // speeds up the physics loop without affecting fps
+        physicsStepsPerTick *= 2;
     }
 
+    /**
+     * Resets the physics speed to its default value based on the game settings.
+     */
     public void resetSpeed() {
-        physicsStepsPerTick = GameSettings.PHYSICS_FREQ * physicsTimer.getDelay()/1000;
+        physicsStepsPerTick = GameSettings.PHYSICS_FREQ * physicsTimer.getDelay() / 1000;
     }
 
+    /**
+     * Retrieves the timer responsible for the physics simulation.
+     *
+     * @return The physics timer.
+     */
     public Timer getPhysicsTimer() {
         return physicsTimer;
     }
 
+    /**
+     * Stops the physics simulation by halting the physics timer.
+     */
     public void stopPhysics() {
         physicsTimer.stop();
     }
 
+    /**
+     * Starts the physics simulation by resuming the physics timer.
+     */
     public void startPhysics() {
         physicsTimer.start();
     }
 
+    /**
+     * Updates the physics for all balls currently in play.
+     *
+     * @param event The event triggered by the physics timer.
+     */
     private void updatePhysics(ActionEvent event) {
         List<Ball> ballsInPlay = gameData.getBallsInPlay();
-        for (int i=0; i<physicsStepsPerTick; i++) {
-            for (Ball ball: ballsInPlay) {
+        for (int i = 0; i < physicsStepsPerTick; i++) {
+            for (Ball ball : ballsInPlay) {
                 updateBall(ball);
             }
         }
     }
 
+    /**
+     * Calculates the intersection point of a line (defined by an angle and starting point) with a line segment.
+     *
+     * @param angle   The angle of the line in degrees.
+     * @param p0      The starting point of the line.
+     * @param segment The line segment to check for intersection.
+     * @return The intersection point, or {@code null} if no intersection exists.
+     */
     private static Point2D.Double lineAndSegment(double angle, Point2D.Double p0, Line2D.Double segment) {
         //https://www.jeffreythompson.org/collision-detection/line-line.php
         angle = -Math.toRadians(angle);
@@ -74,6 +128,15 @@ public class PhysicsEngine {
         return null;
     }
 
+    /**
+     * Checks if a point lies on a given line segment, by checking if the sum of distances from the ends of
+     * the segment add up to the length of the segment.
+     *
+     * @param p         The point to check.
+     * @param lineStart The start of the line segment.
+     * @param lineEnd   The end of the line segment.
+     * @return {@code true} if the point lies on the segment; {@code false} otherwise.
+     */
     private static boolean pointOnLine(Point2D.Double p, Point2D.Double lineStart, Point2D.Double lineEnd) {
         // A point is on a line if the sum of distances from the end points is roughly
         // equal to the length of the line.
@@ -83,6 +146,13 @@ public class PhysicsEngine {
         return Math.abs(l-d1-d2) < GameSettings.EPS;
     }
 
+    /**
+     * Determines the closest collision point between a ball and a block.
+     *
+     * @param ball  The ball to check for collision.
+     * @param block The block to check for collision.
+     * @return The closest collision point, or {@code null} if no collision exists.
+     */
     private static Point2D.Double ballBlockCollisionPoint(Ball ball, Block block) {
         // This method checks for collision points, which can be:
         // - A corner
@@ -129,6 +199,12 @@ public class PhysicsEngine {
         }
     }
 
+    /**
+     * Identifies the FIRST collision point between a ball and any block in the game.
+     *
+     * @param ball The ball to check for collisions.
+     * @return An entry containing the block and collision point, or {@code null} if no collisions are found.
+     */
     public AbstractMap.SimpleEntry<Block, Point2D.Double> firstCollisionPoint(Ball ball) {
         // This method checks for collisions among all the blocks within minimum collision distance,
         // and returns immediately upon finding a colliding block. Its return is the block
@@ -146,9 +222,14 @@ public class PhysicsEngine {
         return null;
     }
 
+    /**
+     * Updates the movement and state of a ball, handling collisions and interactions with game objects. Each round
+     * we leave the ball in a state where it doesn't collided with anything. This way, at the start of a new round,
+     * we can be sure that the ball is in a valid state, and only after it moves is it possible that there is a collision.
+     *
+     * @param ball The ball to update.
+     */
     public void updateBall(Ball ball) {
-        // Each round we leave the ball in a state where it doesn't collide with anything. This way,
-        // at the start of a new round, we don't need to check for collisions, only after moving.
         ball.move();  // since we moved, we may now have a collision on our hands, or we may have left the panel
         if (ball.getPosition().y > GameSettings.GAME_HEIGHT + ball.getRadius()) {  // Ball exited the play area
             gameData.getCannon().returnBall(ball);
