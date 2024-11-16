@@ -185,8 +185,19 @@ public class Cannon {
      */
     private class FireHandler implements ActionListener {
 
+        /**
+         * The counter storing the number of frames since last firing.
+         */
         private int frameCounter;
+
+        /**
+         * How many frames should bass between shots.
+         */
         private final int framesPerShot;
+
+        /**
+         * The timer for firing the balls.
+         */
         private final Timer timer;
 
         /**

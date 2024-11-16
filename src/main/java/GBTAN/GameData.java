@@ -17,9 +17,20 @@ public class GameData {
      * Enumerates the possible states of the game.
      */
     public enum GameState {
-        PLAYING, // Balls are flying, cannon disabled
-        AIMING, // Waiting for the player to fire
-        GAME_OVER // Waiting to start new game
+        /**
+         * Balls are flying, cannon disabled.
+         */
+        PLAYING,
+
+        /**
+         * Waiting for the player to fire.
+         */
+        AIMING,
+
+        /**
+         * Waiting to start new game
+         */
+        GAME_OVER
     }
 
     /**
