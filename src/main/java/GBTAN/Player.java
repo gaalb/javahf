@@ -49,6 +49,24 @@ public class Player {
     private Map<Integer, Double> blockNumChance;
 
     /**
+     * Retrieves the file to which the player profile will be saved.
+     *
+     * @return The File object to save to.
+     */
+    public File getFile() {
+        return file;
+    }
+
+    /**
+     * Sets the file to save to in saveToFile.
+     *
+     * @param file The File object to save to.
+     */
+    public void setFile(File file) {
+        this.file = file;
+    }
+
+    /**
      * Retrieves the chance of spawning a block with double health points.
      *
      * @return The chance as a double value.

@@ -137,7 +137,7 @@ public class PhysicsEngine {
      * @param lineEnd   The end of the line segment.
      * @return {@code true} if the point lies on the segment; {@code false} otherwise.
      */
-    private static boolean pointOnLine(Point2D.Double p, Point2D.Double lineStart, Point2D.Double lineEnd) {
+    public static boolean pointOnLine(Point2D.Double p, Point2D.Double lineStart, Point2D.Double lineEnd) {
         // A point is on a line if the sum of distances from the end points is roughly
         // equal to the length of the line.
         double l = lineEnd.distance(lineStart);
@@ -153,7 +153,7 @@ public class PhysicsEngine {
      * @param block The block to check for collision.
      * @return The closest collision point, or {@code null} if no collision exists.
      */
-    private static Point2D.Double ballBlockCollisionPoint(Ball ball, Block block) {
+    public static Point2D.Double ballBlockCollisionPoint(Ball ball, Block block) {
         // This method checks for collision points, which can be:
         // - A corner
         // - A point along an edge
@@ -224,7 +224,7 @@ public class PhysicsEngine {
 
     /**
      * Updates the movement and state of a ball, handling collisions and interactions with game objects. Each round
-     * we leave the ball in a state where it doesn't collided with anything. This way, at the start of a new round,
+     * we leave the ball in a state where it doesn't collide with anything. This way, at the start of a new round,
      * we can be sure that the ball is in a valid state, and only after it moves is it possible that there is a collision.
      *
      * @param ball The ball to update.

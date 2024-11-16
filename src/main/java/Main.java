@@ -9,6 +9,7 @@ public class Main {
             GameSave save = new GameSave(preGameMenu.getSaveFile());
             Player player = new Player(preGameMenu.getPlayerFile());
             Game game = new Game(player, save);
+            game.startGame();
         });
     }
 }

@@ -108,7 +108,7 @@ public class Cannon {
      * Fires a single ball from the cannon.
      * The ball's velocity is determined by the cannon's aim angle and game settings.
      */
-    private void fireSingleBall() {
+    public void fireSingleBall() {
         Ball b = storedBalls.removeFirst();
         b.setState(Ball.BallState.IN_PLAY);
         double vx = GameSettings.BALL_SPEED * Math.cos(Math.toRadians(aimAngle));

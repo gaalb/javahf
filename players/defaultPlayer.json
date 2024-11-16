@@ -1,6 +1,6 @@
 {
-  "name": "Teszt Elek",
-  "highScore": 2,
+  "name": "Default Player",
+  "highScore": 1,
   "doubleBlockChance": 0.2,
   "randomizerChance": 0.2,
   "blockTypeChance": {
@@ -15,7 +15,7 @@
     "2": 0.3,
     "3": 0.3,
     "4": 0.2,
-    "5": 0.2,
+    "5": 0.1,
     "6": 0.05
   }
 }

@@ -23,7 +23,7 @@ public class Game {
     /**
      * The graphical user interface for the game, including buttons and the game panel.
      */
-    private final GameFrame gameFrame;
+    private GameFrame gameFrame;
 
     /**
      * Manages physics, such as ball movement and collisions.
@@ -51,7 +51,8 @@ public class Game {
     private int score;
 
     /**
-     * Initializes a new game instance with a player and a saved game state.
+     * Initializes a new game instance with a player and a saved game state, without starting
+     * the gameplay loop or the graphics.
      *
      * @param player   the player associated with this game.
      * @param gameSave the saved game state to load.
@@ -62,29 +63,30 @@ public class Game {
         this.player = player;
         this.score = gameSave.score;
         gameData = new GameData(this);
-        gameFrame = new GameFrame(this);
         physicsEngine = new PhysicsEngine(this);
         physicsEngine.getPhysicsTimer().addActionListener(this::checkGameState);
         aimHandler = new AimHandler(this);
         rng = new Random();
+        gameData.initialize(gameSave);
+    }
 
+    /**
+     * Starts the gameplay loop and the graphics.
+     */
+    public void startGame() {
+        gameFrame = new GameFrame(this);
         gameFrame.getEndRoundButton().addActionListener(e -> {
             for (Ball ball: gameData.getBallsInPlay()) {
                 gameData.getCannon().returnBall(ball);  // rounds can be ended by returning all balls
             }
         });
-
         gameFrame.getSpeedUpButton().addActionListener(e -> {
             physicsEngine.doubleSpeed();
             gameFrame.getSpeedUpButton().setEnabled(false);
         });
-
         JButton newGameButton = gameFrame.getGamePanel().getNewGameButton();
         newGameButton.addActionListener(e -> newGame());
-
         gameFrame.addWindowListener(new Disposer(this));
-
-        gameData.initialize(gameSave);
         setGameState(GameState.AIMING);
     }
 
