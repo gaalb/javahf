@@ -1,17 +1,8 @@
-Logikus, elvárt működés:
-Betöltünk, kezdőképernyő:
--Két gomb:
-    -load player profile -> tallózás a players mappából
-    -use default profile -> automatikusan a defaultPlayer-t használja
-
--Ha megtörtént, megint két gomb:
-    -load save
-    -new game
-
-Szétválasztani:
-    -Van loadSave
-    -van newGame, ami egy loadSave, és egy spawnRow
-
-Mikor kell mit menteni?
--Player profilba high scoret kell menteni, mikor game over és high score lett
--game statet kell menteni egy automatikusan elnevezett fájlba mikor ki X-elik
+Kétféleképp lehet doksit csinálni:
+-mvn javadoc:javadoc
+    -ez html-t generál
+    -nagyon király
+    -nem lehet pdf-et
+-doxyfile-t csinálni, doxyfile-ból (config), doxywizarddal
+    -ez tud latex-et, amiből aztán overleaf compile-of pdfet
+    -nagyon undorítóan néz ki
