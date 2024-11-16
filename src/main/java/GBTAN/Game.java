@@ -303,8 +303,7 @@ public class Game {
         // A new game is where we initialize the game with an empty spot list
         if (score > player.getHighScore()) { // Before starting the new game, save the possible high score
             player.setHighScore(score);
-            File playerFile = new File(GameSettings.PLAYERS_FOLDER, player.getName() + ".json");
-            player.saveToFile(playerFile);
+            player.saveToFile();
             System.out.println("HIGH SCORE!");
         }
         GameSave newGameSave = new GameSave(GameSettings.DEFAULT_SAVE_FILE);

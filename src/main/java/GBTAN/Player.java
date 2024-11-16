@@ -12,6 +12,12 @@ import java.util.Map;
  * for generating new rows of blocks and boons.
  */
 public class Player {
+
+    /**
+     * The file to save/load to/from.
+     */
+    private File file;
+
     /**
      * The name of the player.
      */
@@ -84,6 +90,7 @@ public class Player {
      * @param file The JSON file containing the player's data.
      */
     public Player(File file) {
+        this.file = file;
         try (JsonReader reader = Json.createReader(new FileInputStream(file))) {
             JsonObject playerJson = reader.readObject();
             this.name = playerJson.getString("name");
@@ -147,10 +154,9 @@ public class Player {
 
     /**
      * Saves the player's data to a JSON file.
-     *
-     * @param file The file to which the player's data will be saved.
      */
-    public void saveToFile(File file) {
+    public void saveToFile() {
+        if (file.equals(GameSettings.DEFAULT_PLAYER_FILE)) return;
         JsonObjectBuilder blockTypeChanceBuilder = Json.createObjectBuilder();
         for (Map.Entry<ObjectType, Double> entry : blockTypeChance.entrySet()) {
             blockTypeChanceBuilder.add(entry.getKey().name(), entry.getValue());
