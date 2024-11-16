@@ -3,15 +3,33 @@ package GBTAN;
 import javax.swing.*;
 import java.awt.*;
 
+/**
+ * Represents the top panel of the game UI, which displays the player's name, current score,
+ * and high score. It is styled with a black background and white text.
+ */
 public class TopPanel extends JPanel {
-    // Displays the name of the player and score
-    Game game;
+    /**
+     * The game instance associated with this top panel.
+     */
+    private final Game game;
+
+    /**
+     * Constructs a new instance of this class associated with the specified game instance.
+     *
+     * @param game The game instance to retrieve score and player information from.
+     */
     public TopPanel(Game game) {
         this.game = game;
         setBackground(Color.BLACK);
-        setPreferredSize(new Dimension(GameSettings.GAME_WIDTH, GameSettings.BLOCK_HEIGHT/2));
+        setPreferredSize(new Dimension(GameSettings.GAME_WIDTH, GameSettings.BLOCK_HEIGHT / 2));
     }
 
+    /**
+     * Paints the component, displaying the player's name, current score, and high score.
+     * The player's name is displayed on the left, the score in the center, and the high score on the right.
+     *
+     * @param g The {@code Graphics} object to use for rendering.
+     */
     @Override
     protected void paintComponent(Graphics g) {
         super.paintComponent(g);
