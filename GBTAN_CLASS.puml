@@ -1,0 +1,372 @@
+@startuml
+abstract class GBTAN.CollideableObject {
+# ObjectSpot spot
+# Game game
+# ObjectType type
++ <<Create>> CollideableObject(Game)
++ ObjectType getType()
++ ObjectSpot getSpot()
++ void setSpot(ObjectSpot)
++ Point2D.Double getPosition()
+}
+
+
+enum GBTAN.ObjectType {
++  SQUARE
++  TRIANGLE_LOWER_LEFT
++  TRIANGLE_LOWER_RIGHT
++  TRIANGLE_UPPER_LEFT
++  TRIANGLE_UPPER_RIGHT
++  RANDOMIZER
++  PLUS_ONE
++  NULL
+}
+
+class GBTAN.GameData {
+- ObjectSpot[][] spots
+- List<Ball> balls
+- Game game
+- GameState gameState
+- Cannon cannon
++ <<Create>> GameData(Game)
++ List<Block> getBlocks()
++ List<Boon> getBoons()
+- void initializeSpots()
++ Cannon getCannon()
++ void setCannon(Cannon)
++ ObjectSpot[][] getSpots()
++ List<Ball> getBalls()
++ List<Ball> getBallsInPlay()
++ List<Ball> getBallsReturned()
++ GameState getGameState()
++ void setGameState(GameState)
++ void clearObjects()
++ void assignObjectToSpot(CollideableObject,ObjectSpot)
++ void destroyObject(CollideableObject)
++ void initialize(GameSave)
+}
+
+
+enum GBTAN.GameState {
++  PLAYING
++  AIMING
++  GAME_OVER
+}
+
+class GBTAN.GameFrame {
+- GamePanel gamePanel
+- Game game
+- Timer displayTimer
+- JButton endRoundButton
+- JButton speedUpButton
+- JPanel bottomPanel
+- TopPanel topPanel
++ <<Create>> GameFrame(Game)
++ void display(ActionEvent)
++ GamePanel getGamePanel()
++ JButton getEndRoundButton()
++ JButton getSpeedUpButton()
+}
+
+
+class GBTAN.Cannon {
+- double aimAngle
+- Point2D.Double position
+- Game game
+- List<Ball> storedBalls
++ <<Create>> Cannon(double,double,Game)
++ double getAimAngle()
++ void setAimAngle(double)
++ Point2D.Double getPosition()
++ void setPosition(double)
++ void setPosition(double,double)
++ int storedNumber()
++ void fireSingleBall()
++ void fireAll()
++ void storeBall(Ball)
++ void returnBall(Ball)
++ Point2D.Double project()
+}
+
+
+class GBTAN.Cannon$FireHandler {
+- int frameCounter
+- int framesPerShot
+- Timer timer
++ <<Create>> FireHandler(int,Timer)
++ void actionPerformed(ActionEvent)
+}
+
+
+class GBTAN.Randomizer {
+- Random random
+- List<Ball> affectedBalls
++ <<Create>> Randomizer(double,Game)
++ void affect(Ball)
+}
+
+
+class GBTAN.PlusOne {
++ <<Create>> PlusOne(double,Game)
++ void affect(Ball)
+}
+
+class GBTAN.GamePanel {
+- Dimension dimension
+- Game game
+- GameData gameData
+- JButton newGameButton
++ <<Create>> GamePanel(Game)
+- void setupNewGameButton()
++ JButton getNewGameButton()
+- void paintBackground(Graphics2D)
+- void paintObjectSpots(Graphics2D)
+- void paintAimAssist(Graphics2D)
+- void paintCannon(Graphics2D)
+- void paintBalls(Graphics2D)
+- void paintBlock(Block,Graphics2D)
+- void paintBoon(Boon,Graphics2D)
+- void paintObjects(Graphics2D)
+- void paintGameOver(Graphics2D)
+- void paintPlaying(Graphics2D)
+- void paintAiming(Graphics2D)
+# void paintComponent(Graphics)
+}
+
+
+class GBTAN.Block {
+- Point2D.Double[] corners
+- int health
++ <<Create>> Block(ObjectType,int,Game)
++ void setType(ObjectType)
++ void setSpot(ObjectSpot)
++ Point2D.Double[] getCorners()
++ Line2D.Double[] getSides()
++ Polygon getPolygon()
++ void decrementHealth()
++ int getHealth()
+- void setCornersToSpot()
+}
+
+
+class GBTAN.PreGameMenu {
+- File playerFile
+- File saveFile
++ <<Create>> PreGameMenu(Frame)
++ File getPlayerFile()
++ File getSaveFile()
+}
+
+
+class GBTAN.ObjectSpot {
+- Point2D.Double center
+- Point2D.Double[] corners
+- double sideLength
+- CollideableObject object
++ <<Create>> ObjectSpot(Point2D.Double,double)
+- {static} Point2D.Double[] calculateCorners(Point2D.Double,double)
++ Point2D.Double getCenter()
++ double getSideLength()
++ Point2D.Double[] getCorners()
++ boolean isEmpty()
++ CollideableObject getObject()
++ void setObject(CollideableObject)
++ void clearObject()
+}
+
+
+class GBTAN.PhysicsEngine {
+- Game game
+- GameData gameData
+- Timer physicsTimer
+- int physicsStepsPerTick
++ <<Create>> PhysicsEngine(Game)
++ void doubleSpeed()
++ void resetSpeed()
++ Timer getPhysicsTimer()
++ void stopPhysics()
++ void startPhysics()
+- void updatePhysics(ActionEvent)
+- {static} Point2D.Double lineAndSegment(double,Point2D.Double,Line2D.Double)
++ {static} boolean pointOnLine(Point2D.Double,Point2D.Double,Point2D.Double)
++ {static} Point2D.Double ballBlockCollisionPoint(Ball,Block)
++ AbstractMap.SimpleEntry<Block,Point2D.Double> firstCollisionPoint(Ball)
++ void updateBall(Ball)
+}
+
+
+abstract class GBTAN.Boon {
+- double radius
+# boolean spent
++ <<Create>> Boon(double,Game)
++ double getRadius()
++ {abstract}void affect(Ball)
++ boolean isSpent()
+}
+
+
+class GBTAN.TopPanel {
+- Game game
++ <<Create>> TopPanel(Game)
+# void paintComponent(Graphics)
+}
+
+
+class GBTAN.AimHandler {
+- Game game
+- boolean isAiming
++ <<Create>> AimHandler(Game)
++ void updateAimingAngle(Point)
++ void mousePressed(MouseEvent)
++ void mouseReleased(MouseEvent)
++ void mouseDragged(MouseEvent)
+}
+
+
+class GBTAN.Game {
+- GameData gameData
+- GameFrame gameFrame
+- PhysicsEngine physicsEngine
+- AimHandler aimHandler
+- Random rng
+- Player player
+- int score
++ <<Create>> Game(Player,GameSave)
++ void startGame()
++ Player getPlayer()
++ int getScore()
++ GameData getGameData()
++ GameFrame getGameFrame()
++ PhysicsEngine getPhysicsEngine()
+- void setPlaying()
+- void setGameOver()
+- void setAiming()
++ void setGameState(GameState)
+- void cleanUpSpentBoons()
+- void shiftObjects()
+- T randomChoice(Map<T,Double>)
+- void spawnRow()
++ void newGame()
+- void newRound()
+- void checkGameState(ActionEvent)
+}
+
+
+class GBTAN.GameSettings {
++ {static} double BALL_RADIUS
++ {static} int BLOCK_WIDTH
++ {static} int BLOCK_HEIGHT
++ {static} int BLOCK_COLUMNS
++ {static} int BLOCK_ROWS
++ {static} int GAME_WIDTH
++ {static} int GAME_HEIGHT
++ {static} int FPS
++ {static} int PHYSICS_TIMER_FREQ
++ {static} int PHYSICS_FREQ
++ {static} double BALL_SPEED
++ {static} int FRAMES_BETWEEN_BALLS
++ {static} double EPS
++ {static} double MIN_AIM_ANGLE
++ {static} double BOON_RADIUS
++ {static} File SAVES_FOLDER
++ {static} File PLAYERS_FOLDER
++ {static} File DEFAULT_SAVE_FILE
++ {static} File DEFAULT_PLAYER_FILE
+}
+
+class GBTAN.GameSave {
++ int ballNum
++ double cannonPos
++ int score
++ SpotConfig[][] spots
++ <<Create>> GameSave(File)
++ <<Create>> GameSave(Game)
++ void saveToFile(File)
+}
+
+
+class GBTAN.GameSave$SpotConfig {
++ ObjectType objectType
++ int hp
+}
+
+class GBTAN.Ball {
+- Point2D.Double position
+- Point2D.Double velocity
+- double radius
+- BallState state
+- Game game
++ <<Create>> Ball(Point2D.Double,Point2D.Double,double,BallState,Game)
++ Point2D.Double getPosition()
++ Point2D.Double getVelocity()
++ double getAbsVelocity()
++ double getRadius()
++ void setPosition(Point2D.Double)
++ void setPosition(double,double)
++ void setVelocity(Point2D.Double)
++ void setVelocity(double,double)
++ void setRadius(double)
++ void setState(BallState)
++ BallState getState()
++ void move()
++ void bounceOffWalls()
++ void bounceOffPoint(Point2D.Double)
+}
+
+
+enum GBTAN.BallState {
++  IN_STORE
++  IN_PLAY
++  RETURNED
+}
+
+class GBTAN.Player {
+- File file
+- String name
+- int highScore
+- double doubleBlockChance
+- double randomizerChance
+- Map<ObjectType,Double> blockTypeChance
+- Map<Integer,Double> blockNumChance
++ <<Create>> Player(File)
++ File getFile()
++ void setFile(File)
++ double getDoubleHPChance()
++ double getRandomizerChance()
++ Map<Integer,Double> getBlockNumChance()
++ Map<ObjectType,Double> getBlockTypeChance()
++ String getName()
++ void setName(String)
++ int getHighScore()
++ void setHighScore(int)
++ void saveToFile()
+}
+
+
+class Main {
++ {static} void main(String[])
+}
+
+class GBTAN.Disposer {
+- Game game
++ <<Create>> Disposer(Game)
++ void windowClosed(WindowEvent)
+}
+
+
+
+
+GBTAN.JFrame <|-- GBTAN.GameFrame
+GBTAN.Cannon +.. GBTAN.Cannon$FireHandler
+GBTAN.ActionListener <|.. GBTAN.Cannon$FireHandler
+GBTAN.Boon <|-- GBTAN.Randomizer
+GBTAN.Boon <|-- GBTAN.PlusOne
+GBTAN.JPanel <|-- GBTAN.GamePanel
+GBTAN.CollideableObject <|-- GBTAN.Block
+GBTAN.JDialog <|-- GBTAN.PreGameMenu
+GBTAN.CollideableObject <|-- GBTAN.Boon
+GBTAN.JPanel <|-- GBTAN.TopPanel
+java.awt.event.MouseAdapter <|-- GBTAN.AimHandler
+GBTAN.GameSave +.. GBTAN.GameSave$SpotConfig
+java.awt.event.WindowAdapter <|-- GBTAN.Disposer
+@enduml
